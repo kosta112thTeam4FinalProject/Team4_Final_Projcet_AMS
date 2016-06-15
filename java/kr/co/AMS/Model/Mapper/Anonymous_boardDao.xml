@@ -1,0 +1,387 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.AMS.Model.DAO.Anonymous_boardDao">
+	
+	<!-- 
+		//1. 익명게시판 글 목록 전체(select multi row)_등록순
+		List<Anonymous_board> getAllList(HashMap map) 
+	-->
+	<select id="getAllAnonyList" parameterType="hashMap" resultType="kr.co.AMS.Model.vo.Anonymous_board" >
+		select 
+		       board_idx, nickname, title, notice, ref, depth, 
+		       step, TO_CHAR(regdate, 'YYYY-MM-DD') as regdate, hit from
+		(
+			select rownum rnum, a.* from
+			                            (
+			                            	select * from tb_anonymous
+			                            	order by ref desc, step asc
+			                            
+			                            )a
+			                            			
+		)where rnum >= #{start} and rnum &lt; = #{end}
+			
+	</select>
+	
+	
+	<!-- 
+		//2. 익명게시판 글 상세보기(select single row)
+		Anonymous_board getAnonymousDetail(int board_idx) 
+    -->
+    <select id="getAnonymousDetail" resultType="kr.co.AMS.Model.vo.Anonymous_board">
+    	
+    	select board_idx, writer, nickname, title, content, notice, hit,
+    	TO_CHAR(regdate, 'YYYY-MM-DD') as regdate, ref, depth, step
+		from tb_anonymous
+		where board_idx=#{board_idx}
+    
+    </select>
+	
+	
+	<!-- 
+	     //3. 익명게시판 글 등록하기(insert)
+		 int insertAnonymous(Anonymous_board anony_board) 
+	 -->
+	 <insert id="insertAnonymous" parameterType="kr.co.AMS.Model.vo.Anonymous_board">
+	   
+	    <selectKey order="BEFORE" keyProperty="board_idx" resultType="Integer">
+	       	select seq_tb_anonymous.nextval from dual
+	    </selectKey>
+	    
+	  	insert into tb_anonymous
+	 	(board_idx, writer, nickname, title, content, ref, depth, step, regdate, hit)
+	 	values (#{board_idx}, 
+	 	        #{writer}, 
+	 	        #{nickname},
+	 	        #{title},
+	 	        #{content},
+	 	        #{board_idx},
+	 	        0,
+	 	        0,
+	 	        sysdate,
+	 	        0    	       	
+	 			)
+	 </insert>
+	
+	
+	<!-- 
+		//4. 익명게시판 파일 등록하기(insert)
+		int insertFile(Map<String, Object> map)
+    -->
+	
+	
+	<!-- 
+		//5. 익명게시판 파일 읽어오기(목록보기)(select)
+		List<Map<String, Object>> selectFileList(int board_idx)  
+	-->
+	
+	
+	<!-- 
+		//6. 익명게시판 파일 삭제하기(delete)
+		void deleteFileList(Map<String, Object> map)  
+	-->
+	
+	
+	<!-- 
+		//7. 익명게시판 파일 수정하기(update)
+		void updateFile(Map<String, Object> map) 
+	--> 
+	
+	
+	
+	<!-- 
+		//8. 익명게시판 글 수정하기(update)
+		int updateAnonymous(Anonymous_board anony_board)  
+	-->
+	<update id="updateAnonymous" parameterType="kr.co.AMS.Model.vo.Anonymous_board">
+	
+		update tb_anonymous set
+								writer=#{writer}, nickname=#{nickname}, title=#{title},
+								content=#{content}, notice=#{notice}, regdate=sysdate
+				where board_idx=#{board_idx}		
+	
+	</update>
+	
+	
+	<!-- 
+		//9. 익명게시판 글 삭제하기(delete)	
+		//  삭제 규칙) 답글이 있을 경우, 답글을 제외한 원본 글만 삭제
+		//           원본글 삭제 후 > 삭제된 원본글입니다.
+		//           댓글이 있을 경우, 댓글을 포함한 해당 원본 글 삭제
+		int deleteAnonymous(int board_idx) 
+	-->
+	<delete id="deleteAnonymous">
+		delete from tb_anonymous 
+		       where board_idx=#{board_idx}
+		       in (select ref from tb_anonymous where idx=#{board_idx})
+		
+	
+	
+	</delete> 
+	
+	
+	<!-- 
+		//10. 익명게시판 글 전체 건수(select count)
+		int anonymousTotalCount()  
+	-->
+	<select id="anonymousTotalCount" resultType="Integer">
+		
+		select count(*) from tb_anonymous
+	
+	</select>
+	
+	
+	<!-- //11. 익명게시판 페이징 처리
+		
+     -->
+	
+	
+	
+	<!-- 
+		//12.익명게시판 조회수 증가(update hit)
+		boolean getAnonymousReadnum(int board_idx) 
+	--> 
+	<update id="getAnonymousReadnum" parameterType="Integer">
+		
+		update tb_anonymous set hit = hit+1 where board_idx=#{board_idx}
+		
+	</update>
+	
+	<!--  
+		//13.익명게시판 조회순 정렬(select hit)
+		List<Anonymous_board> sortListHit(HashMap map)
+	-->
+	<select id="getAllList" parameterType="hashMap" resultType="kr.co.AMS.Model.vo.Anonymous_board" >
+		select 
+		       board_idx, nickname, title, notice, ref, depth, 
+		       step, TO_CHAR(regdate, 'YYYY-MM-DD') as regdate, hit from
+		(
+			select rownum rnum, a.* from
+			                            (
+			                            	select * from tb_anonymous
+			                            	order by notice desc, ref desc, step asc, hit desc
+			                            
+			                            )a
+			                            			
+		)where rnum >= #{start} and rnum &lt; = #{end}
+			
+	</select>
+	
+	
+	<!-- 
+		//13. 익명게시판 답글 등록하기(insert)
+		int insertReAnonymous(Anonymous_board anony_board) 
+	-->
+	<insert id="insertReAnonymous" parameterType="kr.co.AMS.Model.vo.Anonymous_board">
+	
+	 	<selectKey order="BEFORE" keyProperty="board_idx" resultType="Integer">
+	       	select seq_tb_anonymous.nextval from dual
+	    </selectKey>	
+	    
+		insert into tb_anonymous
+			   (board_idx, writer, nickname, title, content, ref, depth, step, regdate, hit)
+			   values 
+			   (#{board_idx}, 
+	 	        #{writer}, 
+	 	        #{nickname},
+	 	        #{title},
+	 	        #{content},
+	 	        #{ref},
+	 	        #{depth}+1,
+	 	        #{step}+1,
+	 	        sysdate,
+	 	        0    	       	
+	 			)
+	
+	</insert>
+	
+	
+	<!-- 
+		//14.익명게시판 답글 파일 등록하기(insert)
+		int reInsertFile(Map<String, Object> map)  
+	-->
+	
+	
+	<!-- 
+		//15.익명게시판 답글 파일 읽어오기(목록보기)(select)
+		List<Map<String, Object>> reSelectFileList(int board_idx) 
+	--> 
+	
+	
+	<!-- 
+		//16.익명게시판 답글 파일 삭제하기(delete)
+		void reDeleteFileList(Map<String, Object> map) 
+	--> 
+	
+	
+	<!-- 
+		//17.익명게시판 답글 파일 수정하기(update)
+		void reUpdateFile(Map<String, Object> map) 
+	--> 
+	
+	
+	
+	<!-- 
+		//19.익명게시판 답글 삭제하기(delete)
+		//   삭제 규칙) 원본 글이 있을 경우, 원본 글을 제외한 해당 답글만 삭제
+		//            답글의 댓글이 있을 경우, 댓글을 포함한 해당 답글 삭제
+		int deleteReAnonymous(int board_idx) 
+	-->
+	
+	
+		
+	<!-- 
+	    //21. 익명게시판 답글의 순번 처리
+	    void updateAnonymousStep(Anonymous_board anony_board)   
+    -->
+    <update id="updateAnonymousStep">
+    	update tb_anonymous set step = step + 1
+    		   where ref = #{ref} and step > #{step}
+    </update>
+	
+
+	<!--
+		//22.익명게시판 댓글 등록하기(insert)
+		int insertAnonymousComment(Anonymous_comment anony_comment)	
+	  -->
+	  
+	  <insert id="insertAnonymousComment" >
+	  
+	  	<selectKey order="BEFORE" keyProperty="comment_idx" resultType="Integer">
+	       	select seq_tb_anonymous_comment.nextval from dual
+	    </selectKey>
+	  	
+	  	insert into tb_anonymous_comment 
+	  	(comment_idx, board_idx, writer, nickname, content, regdate, ref, depth, step)
+	  	values
+	  	(
+	  		#{comment_idx},
+	  		#{board_idx},
+	  		#{writer},
+	  		#{nickname},
+	  		#{content},
+	  		sysdate,
+	  		#{comment_idx},
+	  		0,
+	  		0  	
+	  	)
+	  
+	  </insert>	  
+	  
+	  <!-- 
+	  		//23.익명게시판 댓글 수정하기(update)
+			int updateAnonymousComment(Anonymous_comment anony_comment)	  
+	   -->
+	   
+	   <update id="updateAnonymousComment" parameterType="kr.co.AMS.Model.vo.Anonymous_comment">
+	   		
+	   		update tb_anonymous_comment 
+	   		set 
+	   		writer=#{writer}, nickname=#{nickname}, content=#{content},
+	   		regdate=sysdate
+	   		where comment_idx=#{comment_idx}
+	   				   	
+	   </update>
+	   
+	  	
+	   <!--
+	   		//24.익명게시판 댓글 삭제하기(delete)
+			int deleteAnonymousComment(int comment_idx)	   
+	   -->
+	   
+	   <delete id="deleteAnonymousComment">
+	   	
+	   		delete from tb_anonymous_comment where comment_idx=#{comment_idx}
+	   
+	   </delete>
+	   
+	   <!-- 
+	   		//25.익명게시판 댓글 목록전체(상세보기)(select multi row)
+			List<Anonymous_comment> getAllCommentList(int board_idx)	   
+	    -->
+	    
+	    <select id="getAllCommentList" parameterType="hashMap" resultType="kr.co.AMS.Model.vo.Anonymous_comment">
+	    	
+	    	select
+	    			comment_idx, writer, nickname, content, ref, depth, step,
+	    			TO_CHAR(regdate, 'YYYY-MM-DD') as regdate from 
+	    	(
+	    		select rownum rnum, ac. * from 
+	    										(
+	    											select * from tb_anonymous_comment	    				
+	    											order by ref desc, step asc	    										
+	    										
+	    										)ac		    	   	
+	    	
+	    	)where rnum >= #{start} and rnum &lt; = #{end}    
+	       
+	    </select>
+	   	
+	   <!--
+	    	//26.익명게시판 댓글 전체 건수(select count)
+			int anonymousCommentTotalCount()	    
+	    -->
+	    <select id="anonymousCommentTotalCount" resultType="Integer">
+		
+			select count(*) from tb_anonymous_comment
+	
+		</select>
+	    
+	    
+	    
+	   <!-- 
+	    	//27.익명게시판 댓글의 댓글 등록하기(insert)
+	    	int insertReAnonymousComment(Anonymous_comment anony_comment)
+	    -->
+	    
+	    <insert id="insertReAnonymousComment" parameterType="kr.co.AMS.Model.vo.Anonymous_comment">
+	
+		 	<selectKey order="BEFORE" keyProperty="comment_idx" resultType="Integer">
+		       		select seq_tb_anonymous_comment.nextval from dual
+		    </selectKey>
+		  	
+		  	insert into tb_anonymous_comment 
+		  	(comment_idx, board_idx, writer, content, regdate, ref, depth, step)
+		  	values
+		  	(
+		  		#{comment_idx},
+		  		#{board_idx},
+		  		#{writer},
+		  		#{content},
+		  		sysdate,
+		  		#{ref},
+		  		#{depth}+1,
+		 	    #{step}+1
+		  	) 
+	    
+		</insert>    
+	    
+	   <!-- 
+	    	//28.익명게시판 댓글의 순번처리(insert)
+	    	int updateAnonymousCommentStep(Anonymous_comment anony_comment)
+	   -->
+	   
+	   <update id="updateAnonymousCommentStep">
+	   
+    	update tb_anonymous_comment set step = step + 1
+    		   where ref = #{ref} and step > #{step}
+    		   
+       </update> 
+       
+       <!--
+       		//28.익명게시판 댓글 상세보기(수정 시 필요)
+			Anonymous_comment getAnonymousCommentDetail(int comment_idx)
+        -->   
+        <select id="getAnonymousCommentDetail" resultType="kr.co.AMS.Model.vo.Anonymous_comment">
+        	
+        	select board_idx, comment_idx, writer, nickname, content, 
+        	TO_CHAR(regdate, 'YYYY-MM-DD') as regdate, ref, depth, step
+        	from tb_anonymous_comment
+        	where comment_idx=#{comment_idx}
+        
+        </select>    
+
+	
+</mapper> 
