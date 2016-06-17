@@ -19,7 +19,7 @@
 		</div>
 
 		<div id="ams-header-menu">
-			<a href="">회원가입</a> | <a href="">비밀번호찾기</a>
+			<a href="${pageContext.request.contextPath}/member_join.ams">회원가입</a> | <a href="">비밀번호찾기</a>
 
 		</div>
 	</div>
