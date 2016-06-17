@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.AMS.Model.DAO.Complaint_boardDao">
+
+	<!-- 게시글 목록 출력 -->
+	<select id="getAllList" parameterType="hashmap"
+		resultType="kr.co.AMS.Model.vo.Complaint_board">
+		select board_idx, title, writer, regdate, hit, notice from
+		(
+		select rownum rnum, c.* from (
+		select * from tb_complaints
+		<if test="search != null">
+			<if test="scp1 != null">
+			where ${scp1} like '%${search}%'
+			</if>
+			
+			<if test="scp2 != null">
+				or ${scp2} like '%${search}%'
+			</if>
+			
+			<if test="from != null and to != null">
+				and regdate between #{from} and #{to}
+			</if>
+		</if>
+		order by notice desc, ${order} desc, ref desc, step asc
+		) c
+
+		) where rnum >= #{start} and rnum <![CDATA[<=]]> #{end}
+	</select>
+
+	<!-- 전체 게시글 수 가져오기 -->
+	<select id="getComplaintsCount" resultType="Integer">
+		select count(*) from tb_complaints
+	</select>
+	
+	<!-- 검색한 글 전체 수 가져오기 -->
+	<!-- getSearchCount() -->
+	<select id="getSearchCount" parameterType="hashmap" resultType="Integer">
+		select count(*) from tb_complaints
+		<if test="scp1 != null">
+			where ${scp1} like '%${search}%'
+			</if>
+			
+			<if test="scp2 != null">
+				or ${scp2} like '%${search}%'
+			</if>
+			
+			<if test="from != null and to != null">
+				and regdate between #{from} and #{to}
+			</if>
+	</select>
+	
+	<!-- 게시글 작성 -->
+	<insert id="insertComplaint" useGeneratedKeys="true" keyProperty="board_idx">
+		<selectKey order="BEFORE" keyProperty="board_idx" resultType="Integer">
+			SELECT seq_complaints.nextval FROM dual
+		</selectKey>
+		INSERT INTO tb_complaints(board_idx, notice, writer, title, content, ref, hit)
+		VALUES( #{board_idx}, #{notice}, #{writer}, #{title}, #{content}, #{board_idx}, 0)
+	</insert>
+	
+	<!-- 게시글 상세 보기 -->
+	<select id="getComplaintDetail" resultType="kr.co.AMS.Model.vo.Complaint_board">
+		select board_idx, title, writer, content, notice, ref, depth, step, regdate, hit
+		from tb_complaints where board_idx = #{board_idx}
+	</select>
+	
+	<!-- 게시글 삭제 -->
+	<delete id="deleteComplaint">
+		delete from tb_complaints where board_idx = #{board_idx}
+	</delete>
+	
+	<!-- 게시글 수정 -->
+	<update id="updateComplaint">
+		update tb_complaints set title=#{title}, content= #{content}
+		where board_idx = #{board_idx}
+	</update>	
+
+	<!-- 조회수 증가 -->
+	<!-- int increaseHit(int board_idx) throws ClassNotFoundException, SQLException; -->
+	<update id="increaseHit">
+		update tb_complaints set hit = hit+1 where board_idx = #{board_idx}
+	</update>
+</mapper> 
