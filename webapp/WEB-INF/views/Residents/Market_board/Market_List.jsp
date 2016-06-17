@@ -30,7 +30,7 @@
 	      			</tr>
 	      			<c:forEach items="${list}" var="m">
 	      			<tr>
-	      			  <td class="board_idx">${m.board_idx} <img src="./resources/images/market_tag.png"> <a href="market_detail.ams?board_idx=${m.board_idx}"> ${m.title} </a> </td>
+	      			  <td class="board_idx">${m.board_idx} <img src="./resources/images/notice_tag.png"> <a href="market_detail.ams?board_idx=${m.board_idx}"> ${m.title} </a> </td>
 	      			  <td class="writer"> ${m.writer} </td>
 	      			  <td class="regdate"> ${m.regdate} </td>
 	      			  <td class="hit">${m.hit}</td>
