@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.AMS.Model.DAO.Staff_boardDao">
+	<select id="getAllList" parameterType="hashMap" resultType="kr.co.AMS.Model.vo.Staff_board" >
+	
+		 select * from
+	      	(
+	      		select rownum rnum, e.* from (
+	      	   							 select * from tb_staff 
+	      	   							 order by regdate desc	
+	      	                           	) e
+	      					
+	      	) where rnum >= #{start} and rnum &lt;= #{end}		
+	</select>
+	
+	<!--조회수 증가  -->
+<update id="getStaffReadnum">
+	UPDATE TB_STAFF SET HIT = HIT +1 WHERE BOARD_IDX=#{board_idx}
+</update>
+<!-- 게시판 상세정보 -->
+ <select id="getStaff" resultType="kr.co.AMS.Model.vo.Staff_board">
+   	SELECT * FROM TB_STAFF WHERE BOARD_IDX=#{board_idx}
+</select>
+<!--게시글 수  -->
+<select id="StaffTotalCount" resultType="Integer">
+		SELECT COUNT(*) FROM TB_STAFF
+</select> 
+
+<!--게시글 수정  -->
+ <update id="updateStaff" parameterType="kr.co.AMS.Model.vo.Staff_board">
+	
+		update tb_staff set
+								writer=#{writer}, title=#{title},
+								content=#{content}, notice=#{notice}, regdate=sysdate
+				where board_idx=#{board_idx}		
+	
+	</update>
+
+<!--글등록하기  -->
+  <insert id="insertStaff">
+	   
+	    <selectKey order="BEFORE" keyProperty="board_idx" resultType="Integer">
+	       	SELECT SEQ_STAFF.NEXTVAL FROM DUAL
+	    </selectKey>
+	    
+	  	INSERT INTO TB_STAFF
+	 	(BOARD_IDX, WRITER, TITLE, CONTENT, REF, DEPTH, STEP, REGDATE, HIT)
+	 	VALUES (#{board_idx}, 
+	 	        #{writer}, 
+	 	        #{title},
+	 	        #{content},
+	 	        #{board_idx},
+	 	        0,
+	 	        0,
+	 	        sysdate,
+	 	        0    	       	
+	 			)
+	 </insert>
+
+ <delete id="deleteStaff" >
+   	delete from tb_staff 
+		       where board_idx=#{board_idx}
+		       in (select ref from tb_staff where idx=#{board_idx})
+		
+ </delete>
+ 
+  <insert id="insertFile" parameterType="hashMap">
+     	INSERT INTO TB_FILE
+        (
+            IDX,
+            BOARD_IDX,
+            ORIGINAL_FILE_NAME,
+            STORED_FILE_NAME,
+            FILE_SIZE,
+            CREA_ID
+        )
+        VALUES
+        (
+            SEQ_TB_FILE_IDX.NEXTVAL,
+           	#{BOARD_IDX},
+            #{ORIGINAL_FILE_NAME},
+            #{STORED_FILE_NAME},
+            #{FILE_SIZE},
+            'Admin'
+        )
+         </insert>
+ <select id="selectFileList" resultType="hashmap">
+     	select idx, original_file_name, round(file_size) as file_size
+     	from tb_file
+     	where board_idx = #{board_idx}
+     	and del_gb = 'N'
+ </select>
+ 
+	<update id="updateStaffDepth">
+		UPDATE TB_STAFF SET DEPTH = DEPTH + 1 WHERE REF=#{ref} AND DEPTH>#{depth}
+	</update>
+	
+		<insert id="insertReStaff" parameterType="kr.co.AMS.Model.vo.Staff_board">
+	
+	 	<selectKey order="BEFORE" keyProperty="board_idx" resultType="Integer">
+	       	select seq_tb_staff.nextval from dual
+	    </selectKey>	
+	    
+		insert into tb_staff
+			   (board_idx, writer,  title, content, ref, depth, step, regdate, hit)
+			   values 
+			   (#{board_idx}, 
+	 	        #{writer},  	    
+	 	        #{title},
+	 	        #{content},
+	 	        #{ref},
+	 	        #{depth}+1,
+	 	        #{step}+1,
+	 	        sysdate,
+	 	        0    	       	
+	 			)
+	
+	</insert>
+	
+	  <select id="getSearchList" parameterType="hashMap" resultType="kr.co.AMS.Model.vo.Staff_board">
+
+	  	select * from tb_staff
+
+	   <where>
+ 			<if test="column != null">
+	  			${column} like '%' || #{search} || '%'
+	 	 	</if>
+	  		<if test="column != null">
+	  			and userid = #{userid} ORDER BY RECEIVEDATE DESC
+	  		</if>
+
+	  	</where>
+	  </select>	
+	  
+	  	<!-- 직원게시판 조회순 정렬(select hit) 
+		List<Anonymous_board> sortListHit(HashMap map)
+	-->
+<!-- 	<select id="getAllList" parameterType="hashMap" resultType="kr.co.AMS.Model.vo.Staff_board" >
+		select 
+		       board_idx, title, notice, ref, depth, 
+		       step, TO_CHAR(regdate, 'YYYY-MM-DD') as regdate, hit from
+		(
+			select rownum rnum, a.* from
+			                            (
+			                            	select * from tb_staff
+			                            	order by notice desc, ref desc, step asc, hit desc
+			                            
+			                            )a
+			                            			
+		)where rnum >= #{start} and rnum &lt; = #{end}
+			
+	</select> -->
+
+</mapper> 
