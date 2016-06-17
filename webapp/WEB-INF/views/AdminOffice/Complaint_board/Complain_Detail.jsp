@@ -12,15 +12,15 @@
 	       	<table>
 				<tr>
 					<th>제목</th>
-					<td colspan="3">test제목</td>
+					<td colspan="3">${complaint.title }</td>
 					<td colspan="2" class="right">
-					 <button><a href="complain_modify.ams">수정</a></button>
-					 <button><a href="complain_delete.ams">삭제</a></button></td>
+					 <button><a href="complain_modify.ams?board_idx=${complaint.board_idx}">수정</a></button>
+					 <button><a href="complain_delete.ams?board_idx=${complaint.board_idx}">삭제</a></button></td>
 				</tr>
 				<tr>
-					<th>등록일</th><td>2016.03.29</td>
-					<th>작성자</th><td>104-105</td>
-					<th>조회수</th><td>10</td>					
+					<th>등록일</th><td>${complaint.regdate }</td>
+					<th>작성자</th><td>${complaint.writer }</td>
+					<th>조회수</th><td>${complaint.hit }</td>					
 				</tr>
 				<tr>
 					<th>첨부파일</th><td class="left" colspan="5">test.txt</td>
@@ -28,14 +28,14 @@
 		
 
 				<tr>
-					<td colspan="6"><textarea id="" name="" cols="100" rows="15">내용</textarea></td> 
+					<td colspan="6"><textarea id="content" name="content" cols="100" rows="15">${complaint.content }</textarea></td> 
 					<!-- <td colspan="6">내용</td> -->
 				</tr>
 				
 				<tr>
 					<td class="right" colspan="6">
 					  <button><a href="complain_rewrite.ams">답글</a></button>
-						<button><a href="complain_list.ams">목록</a></button>
+						<button><a href="complain_list.ams?pg=${pg }&rowSize=${rowSize}&order=${order}&search=${search}&period=${period}&scope=${scope}">목록</a></button>
 					</td>
 				
 				</tr>

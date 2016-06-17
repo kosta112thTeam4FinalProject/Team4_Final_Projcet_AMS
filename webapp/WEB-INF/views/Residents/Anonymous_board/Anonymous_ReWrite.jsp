@@ -10,19 +10,23 @@
 	      
 	      <div id="board_content">
 	      <form action="anonymous_rewrite.ams" id="" method="post" enctype="multipart/form-data">
-	        <input type="hidden" name="cp" value="" /> 
-			<input type="hidden" name="ps" value="" /> 
-			<input type="hidden" name="noti_idx" value="" /> <!-- 글번호  -->
+	      
+	        <input type="hidden" name="pg" value="${pg}"/>
+			<input type="hidden" name="ref" value="${anony_board.ref}"/>
+			<input type="hidden" name="step" value="${anony_board.step}"/>
+			<input type="hidden" name="depth" value="${anony_board.depth}"/>
+	        
+			 <!-- 글번호  -->
 	       	<table>
 				<tr>								
 					<th> 작성자 </th>
 					<td colspan="2">
-						<input type="text" name="userid" id="" value="${member.userid }" >
+						<input type="text" name="writer" id="" value="" >
 					</td>
 					
 					<th> 닉네임 </th>
 					<td colspan="2">
-						<input type="text" name="userid" id="" value="등록시 사용한 닉네임" >
+						<input type="text" name="nickname" id="" value="" >
 					</td>					
 					
 				</tr>
@@ -41,21 +45,22 @@
 				<tr>
 					<th>제목</th>
 					<td colspan="5">
-						<input type="text" name="noti_title" id="" value="[Re]test${anonymous.noti_title}" >
+						<input type="text" name="title" id="" value="[Re]${anony_board.title}" >
 					</td>
 				</tr>
 				<tr>
-				 	<td colspan="6"><textarea id="" name="" cols="100" rows="15" >
-				 	원본글의 내용이 보여질 예정${anonymous.noti_content}</textarea></td> 
+				 	<td colspan="6"><textarea id="" name="content" cols="100" rows="15" >
+				 	${anony_board.content}</textarea></td> 
 				</tr>
 				<tr>
 					<th>첨부파일</th><td colspan="5"></td>
 				</tr>
 							
 				<tr>
-					<td class="center" colspan="6">					    
-						<input type="button" name="" value="등록" onclick=""> <!--추후, 버튼으로 변경해서 유효성 검사  -->
-						<button><a href="anonymous_list.ams">취소</a></button>
+					<td class="center" colspan="6">				
+					    <input type="submit" value="등록">    
+						<!-- <input type="button" name="" value="등록" onclick="">  --><!--추후, 버튼으로 변경해서 유효성 검사  -->
+						<button><a href="anonymous_list.ams?pg=${pg}">취소</a></button>
 					</td>				
 				</tr>
 				

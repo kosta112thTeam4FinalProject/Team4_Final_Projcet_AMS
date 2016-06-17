@@ -10,12 +10,12 @@
 	      
 	      <div id="board_content">
 	      <form action="market_modify.ams" id="" method="post" enctype="multipart/form-data">
-	       	<input type="hidden" name="noti_idx" value="" /> <!-- 글 번호  -->
+	       	<input type="hidden" name="board_idx" value="${modify.board_idx}" /> <!-- 글 번호  -->
 	       	<table>
 				<tr>
 					<th>카테고리</th>
 					<td>
-						<select id="" name="">
+						<select id="kind" name="kind">
 							<option selected="selected">선택</option>
 							<option>팝니다</option>
 							<option>삽니다</option>
@@ -23,12 +23,12 @@
 						</select>					
 					</td>
 					<td>
-						<input type="checkbox" value=""  name="" id="">공지사항
+						<input type="checkbox" value="Y"  name="notice" id="">공지사항
 					</td>
 					
 					<th> 작성자 </th>
 					<td colspan="2">
-						<input type="text" name="userid" id="" value="${memeber.userid}" >
+						<input type="text" name="writer" id="" value="writer" >
 					</td>				
 					
 				</tr>
@@ -47,12 +47,12 @@
 				<tr>
 					<th>제목</th>
 					<td colspan="5">
-						<input type="text" name="noti_title" id="" value="수정할 글의 제목${market.noti_title}" >
+						<input type="text" name="title" id="" value="${modify.title}" >
 					</td>
 				</tr>
 				<tr>
-				 	<td colspan="6"><textarea id="" name="" cols="100" rows="15" >
-				 	수정할 글의 내용이 보여질 예정${market.noti_content}</textarea></td> 
+				 	<td colspan="6"><textarea id="" name="content" cols="100" rows="15" >
+				 	${modify.content}</textarea></td> 
 				</tr>
 				<tr>
 					<th>첨부파일</th><td colspan="5"></td>
@@ -60,7 +60,7 @@
 							
 				<tr>
 					<td class="center" colspan="6">					    
-						<input type="button" name="" value="수정완료" onclick=""> <!--추후, 버튼으로 변경해서 유효성 검사  -->
+						<input type="submit" name="" value="수정완료"> <!--추후, 버튼으로 변경해서 유효성 검사  -->
 						<button><a href="market_list.ams">취소</a></button>
 					</td>				
 				</tr>

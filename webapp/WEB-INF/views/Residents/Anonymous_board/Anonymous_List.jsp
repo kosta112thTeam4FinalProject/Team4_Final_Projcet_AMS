@@ -1,10 +1,37 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 	      <div id="title_bar">	
 	         <span> 익명게시판 </span> 
 	         <img src = "./resources/images/anonymous_title.png">   	
+	      </div>
+	      
+	      <div id="board_top">
+	      	<form name="board_list">
+						<!-- form tag에 action이 없으면 현재 URL 주소로 submit -->
+						<select name="ps" onchange="submit()">
+							<%-- <c:forEach var="i" begin="10" end="50" step="10">
+								<c:choose>
+									<c:when test="${pageSize == i}">
+										<option value='${i}' selected>${i}건</option>
+									</c:when>
+									<c:otherwise>
+										<option value='${i}'>${i}건</option>
+									</c:otherwise>
+								</c:choose>
+							</c:forEach> --%>
+							<option selected="selected">10</option>
+			      		    <option>20</option>
+			      		    <option>30</option>
+			      		    <option>40</option>
+			      		    <option>50</option>							
+						</select>
+				</form>
+				
+				<a href="" >최신순 |</a>  <a href="">조회순</a>
+	      
 	      </div>
 	      
 	      
@@ -19,22 +46,32 @@
 	      			</tr>      		
 	      		</thead>
 	      		
+	      		<c:forEach var="anony" items="${list}">
+	      		
 	      		<tbody>
 	      			<tr>
-	      			  <td>1 &nbsp; <img src="./resources/images/anonymous_tag.png"> <a href="anonymous_detail.ams">익명게시판 테스트 </a></td>
-	      			  <td> 젤리맘</td>
-	      			  <td> 2016.03.10</td>
-	      			  <td>5</td>
-	      			</tr>
-	      			<tr>
-	      			  <td>${anonymous.noti_idx} <img src="./resources/images/anonymous_tag.png"> <a href="anonymous_detail.ams?seq=${anonymous.noti_idx}"> ${anonymous.noti_title} </a> </td>
-	      			  <td> ${anonymous.noti_writer} </td>
-	      			  <td> ${anonymous.noti_regdate} </td>
-	      			  <td>${anonymous.noti_hit}</td>
-	      			</tr>
-	      			
-	      			      			    	      		
-	      		</tbody>      	     	
+	      			 <td>
+	      			<c:choose>	
+	      			    <c:when test="${anony.depth > 0}">
+	      			  	<input type="hidden" name="board_idx" value="${anony.board_idx}">
+	      			  </c:when>
+	      			  
+	      			   <c:otherwise>
+	      			   ${anony.board_idx}
+	      			  </c:otherwise>	      			  
+	      			 </c:choose>
+	      			   &nbsp; <img src="./resources/images/anonymous_tag.png"> 
+	      			  <c:forEach begin="0" end="${anony.depth}">
+	      			  &nbsp;
+	      			  </c:forEach>
+	      			  <a href="anonymous_detail.ams?board_idx=${anony.board_idx}&pg=${pg}">${anony.title}</a></td>
+	      			  
+	      			  <td>${anony.nickname} </td>
+	      			  <td>${anony.regdate}</td>
+	      			  <td>${anony.hit}</td>
+	      			</tr>  						      			    	      		
+	      		</tbody> 
+	      		</c:forEach>     	     	
 	      	</table>
 	      	 <button class="reg_button"><a href="anonymous_write.ams">등록</a></button>
 	      	</div>
@@ -42,15 +79,34 @@
 	      	
 	      	<div id="board_page">
 	      	  
-	      	  <a href="">[이전]</a>
+	      	  <!-- 이전  -->
+	      	  <c:if test="${pg>1}"> <!-- 이전 페이지가 있는 경우  -->
+	      	  <a href="anonymous_list.ams?pg=${pg-1}">[이전]</a>
+	      	  </c:if>
+	      	 <%--  <c:if test="${pg<=block}"> <!-- 이전 페이지가 없는 경우  -->
+	      	  <span style="color:gray">[이전]</a>
+	      	  </c:if>  --%>
+	
+	      			      	  
+	      	  <!-- 1,2,3.....  -->
 	      	  <ul>
-				<li><a class=strong href="">1</a></li>
-				<li><a href="">2</a></li>
-				<li><a href="">3</a></li>
-				<li><a href="">4</a></li>
-				<li><a href="">5</a></li>
+	      	    <c:forEach begin="${fromPage}" end="${toPage}" var="i">
+					<c:if test="${i==pg}"> <li style="color:red">${i}</li> </c:if>
+					<c:if test="${i!=pg}"> <li><a href="anonymous_list.ams?pg=${i}">${i}</a></li>
+					</c:if>					
+				</c:forEach>
 			 </ul>
-	      	  <a href="">[다음]</a>
+			 
+			 <!-- 다음  -->
+			 <c:if test="${pg < allPage}">
+	      	  	<a href="anonymous_list.ams?pg=${pg+1}">[다음]</a>
+	      	 </c:if>
+	      	 
+	      <%-- 	 <c:if test="${toPage>=allPage}"> <!-- 다음 페이지가 없는 경우  -->
+	      	  	<span style="color:gray">[다음]</a>
+	      	 </c:if> --%>
+		
+
 	      	
 	      	</div> 
 	      	

@@ -13,13 +13,16 @@
 	       	<table>
 				<tr>								
 					<th> 작성자 </th>
-					<td colspan="2">
-						<input type="text" name="userid" id="" value="${member.userid }" >
+					<td> <!-- colspan="2 -->
+						<input type="text" name="writer" id="" value="" >
+					</td>
+					<td>
+					공지사항 <input type="checkbox" name="notice" value="y">
 					</td>
 					
 					<th> 닉네임 </th>
 					<td colspan="2">
-						<input type="text" name="userid" id="" value="등록시 사용한 닉네임" >
+						<input type="text" name="nickname" id="" value="" >
 					</td>					
 					
 				</tr>
@@ -38,11 +41,11 @@
 				<tr>
 					<th>제목</th>
 					<td colspan="5">
-						<input type="text" name="noti_title" id="" >
+						<input type="text" name="title" id="" >
 					</td>
 				</tr>
 				<tr>
-				 	<td colspan="6"><textarea id="" name="" cols="100" rows="15">
+				 	<td colspan="6"><textarea id="" name="content" cols="100" rows="15">
 				 	 공지사항을 등록해주세요</textarea></td> 
 				</tr>
 				<tr>
@@ -50,8 +53,9 @@
 				</tr>
 							
 				<tr>
-					<td class="center" colspan="6">					    
-						<input type="button" name="" value="등록" onclick=""> <!--추후, 버튼으로 변경해서 유효성 검사  -->
+					<td class="center" colspan="6">			
+					    <input type="submit" value="등록">	    
+						<!-- <input type="button" name="" value="등록" onclick="">  --><!--추후, 버튼으로 변경해서 유효성 검사  -->
 						<button><a href="anonymous_list.ams">취소</a></button>
 					</td>				
 				</tr>

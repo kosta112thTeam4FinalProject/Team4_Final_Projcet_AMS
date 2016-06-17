@@ -8,12 +8,12 @@
 	      </div>
 	      
 	      <div id="board_content">
-	      <form action="market_write.ams" id="" method="post" enctype="multipart/form-data">
+	      <form action="" method="post" enctype="multipart/form-data">
 	       	<table>
 				<tr>
 					<th>카테고리</th>
 					<td >
-						<select id="" name="">
+						<select id="kind" name="kind">
 							<option selected="selected">선택</option>
 							<option>팝니다</option>
 							<option>삽니다</option>
@@ -21,12 +21,12 @@
 						</select>					
 					</td>
 					<td>
-						<input type="checkbox" value=""  name="" id="">공지사항
+						<input type="checkbox" value="Y" name="notice" name="notice">공지사항
 					</td>
 					
 					<th> 작성자 </th>
 					<td colspan="2">
-						<input type="text" name="userid" id="" value="${memeber.userid}">
+						<input type="text" name="writer" id="writer">
 					</td>				
 					
 				</tr>
@@ -45,11 +45,11 @@
 				<tr>
 					<th>제목</th>
 					<td colspan="5">
-						<input type="text" name="noti_title" id="" >
+						<input type="text" name="title" id="title" >
 					</td>
 				</tr>
 				<tr>
-				 	<td colspan="6"><textarea id="" name="" cols="100" rows="15">
+				 	<td colspan="6"><textarea id="content" name="content" cols="100" rows="15">
 				 	 공지사항을 등록해주세요</textarea></td> 
 				</tr>
 				<tr>
@@ -58,7 +58,7 @@
 							
 				<tr>
 					<td class="center" colspan="6">					    
-						<input type="button" name="" value="등록" onclick=""> <!--추후, 버튼으로 변경해서 유효성 검사  -->
+						<input type="submit" value="등록"> <!--추후, 버튼으로 변경해서 유효성 검사  -->
 						<button><a href="market_list.ams">취소</a></button>
 					</td>				
 				</tr>
