@@ -9,11 +9,12 @@
 	      </div>
 	      
 	      <div id="board_content">
-	      <form action="complain_write.ams" id="" method="post" enctype="multipart/form-data">
+	      <form action="complain_modify.ams" id="" method="post" enctype="multipart/form-data">
+	       	<input type="hidden" name="board_idx" value="${complaint.board_idx }" /> <!-- 글 번호  -->
 	       	<table>
 				<tr>
-				<!-- 민원게시판의 카테고리를 민원으로만 하기위해 추후 수정 예정  -->
-					<th>카테고리</th>
+					<!-- 민원게시판의 카테고리를 민원으로만 하기위해 추후 수정 예정  -->
+					<!-- <th>카테고리</th>
 					<td colspan="1">
 						<select id="" name="">
 							<option selected="selected">민원</option>
@@ -22,14 +23,14 @@
 							<option>부녀회</option>
 							<option>노인회</option>						
 						</select>					
-					</td>
+					</td> -->
 					
 					<td>
 						<input type="checkbox" value=""  name="" id="">공지사항
 					</td>
 					<th> 작성자 </th>
 					<td colspan="2">
-						<input type="text" name="userid" id="" value="${memeber.userid}">
+						<input type="text" name="writer" id="" value="${complaint.writer}" readonly >
 					</td>				
 					
 				</tr>
@@ -48,12 +49,15 @@
 				<tr>
 					<th>제목</th>
 					<td colspan="5">
-						<input type="text" name="noti_title" id="" >
+						<input type="text" name="title" id="" value="${complaint.title}" >
 					</td>
 				</tr>
 				<tr>
-				 	<td colspan="6"><textarea id="" name="" cols="100" rows="15">
-				 	 공지사항을 등록해주세요</textarea></td> 
+				 	<td colspan="6">
+					 	<textarea id="content" name="content" cols="100" rows="15" >
+					 		${complaint.content}
+					 	</textarea>
+				 	</td> 
 				</tr>
 				<tr>
 					<th>첨부파일</th><td colspan="5"></td>
@@ -61,7 +65,7 @@
 							
 				<tr>
 					<td class="center" colspan="6">					    
-						<input type="button" name="" value="등록" onclick=""> <!--추후, 버튼으로 변경해서 유효성 검사  -->
+						<input type="button" name="" value="수정완료" onclick=""> <!--추후, 버튼으로 변경해서 유효성 검사  -->
 						<button><a href="complain_list.ams">취소</a></button>
 					</td>				
 				</tr>
@@ -72,3 +76,4 @@
 	      </div>
 	      
 	    
+	      
