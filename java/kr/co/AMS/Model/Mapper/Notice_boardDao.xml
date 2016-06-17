@@ -4,4 +4,64 @@
     "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="kr.co.AMS.Model.DAO.Notice_boardDao">
+
+
+<select id="getAllList" resultType="kr.co.AMS.Model.vo.Notice_board">
+		<!-- SELECT * FROM TB_NOTICE -->
+		select * from
+		(
+		select rownum rnum, e.* from (
+		select * from TB_NOTICE
+		order by ref desc, depth asc
+		) e
+		) where rnum >= #{start} and rnum &lt;= #{end}
+</select>
+
+<select id="getNotice" resultType="kr.co.AMS.Model.vo.Notice_board">
+		SELECT * FROM TB_NOTICE WHERE board_idx = #{board_idx}
+</select>
+<insert id="insertNotice" >
+	<selectKey order="BEFORE" keyProperty="ref" resultType="integer">
+			select nvl(max(ref),0)+1 as ref from TB_NOTICE
+		</selectKey>
+		INSERT INTO TB_NOTICE(BOARD_IDX, writer, title, CONTENT, REF,
+		DEPTH
+		, STEP, REGDATE, HIT, KIND)
+		VALUES( seq_notice.nextval, #{writer},
+		#{title}, #{content},  #{ref}, 0, 0, SYSDATE,
+		0, #{kind})
+</insert>
+<update id="updateNotice">
+	UPDATE TB_NOTICE SET TITLE=#{title}, CONTENT=#{content}, kind=#{kind}
+		WHERE board_idx=#{board_idx}
+</update>
+<update id="getNoticeReadnum">
+	update tb_notice set hit=hit+1 where board_idx=#{board_idx}
+</update>
+<select id="NoticeTotalCount" resultType="Integer">
+		<!-- String field => param1, String query=>param2 -->
+		SELECT COUNT(*) FROM TB_NOTICE
+		<!-- ${있는 그대로} , #{형변환} 차이점 param1 => AA ${param1} => AA (column 명 , Table 
+			명 ) #{param1} => 'AA' param2 = > 88 ${param2} => 88 #{param2} => 88 oracle 
+			: where ename like '%kim%' # => LIKE '%'kim'%' $ => LIKR '%kim%' -->
+	</select>
+	<update id="updateNoticeDepth">
+		update tb_notice set depth = depth + 1 where ref=#{ref} and depth>#{depth}
+	</update>
+	
+	<insert id="insertReNotice">
+<!-- 		INSERT INTO TB_NOTICE(BOARD_IDX, writer, title, CONTENT,  REF,
+		DEPTH,STEP, REGDATE, HIT, KIND)
+		VALUES( seq_notice.nextval, #{writer},
+		#{title}, #{content}, #{ref}, #{depth}+1, #{step}+1, SYSDATE,0,#{kind}) -->
+			INSERT INTO TB_NOTICE(BOARD_IDX, writer, title, CONTENT, REF,
+		DEPTH
+		, STEP, REGDATE, HIT, KIND)
+		VALUES( seq_notice.nextval, #{writer},
+		#{title}, #{content},  #{ref},   #{depth}+1, #{step}+1, SYSDATE,
+		0, #{kind})
+	</insert>
+	
+
+
 </mapper> 
