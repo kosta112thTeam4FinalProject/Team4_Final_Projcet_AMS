@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 
 	      
@@ -27,13 +28,14 @@
 	      			  <td> 2016.03.10</td>
 	      			  <td>5</td>
 	      			</tr>
+	      			<c:forEach items="${list}" var="m">
 	      			<tr>
-	      			  <td>${market.noti_idx} <img src="./resources/images/market_tag.png"> <a href="market_detail.ams?seq=${market.noti_idx}"> ${market.noti_title} </a> </td>
-	      			  <td> ${market.noti_writer} </td>
-	      			  <td> ${market.noti_regdate} </td>
-	      			  <td>${market.noti_hit}</td>
+	      			  <td class="board_idx">${m.board_idx} <img src="./resources/images/market_tag.png"> <a href="market_detail.ams?board_idx=${m.board_idx}"> ${m.title} </a> </td>
+	      			  <td class="writer"> ${m.writer} </td>
+	      			  <td class="regdate"> ${m.regdate} </td>
+	      			  <td class="hit">${m.hit}</td>
 	      			</tr>
-	      			
+	      			</c:forEach>
 	      			      			    	      		
 	      		</tbody>      	     	
 	      	</table>
@@ -45,15 +47,43 @@
 	      	  
 	      	  <a href="">[이전]</a>
 	      	  <ul>
-				<li><a class=strong href="">1</a></li>
+				<!-- <li><a class=strong href="">1</a></li>
 				<li><a href="">2</a></li>
 				<li><a href="">3</a></li>
 				<li><a href="">4</a></li>
-				<li><a href="">5</a></li>
+				<li><a href="">5</a></li> -->
+				<c:forEach begin="${fromPage}" end="${toPage}" var="i">
+					<c:if test="${i==pg}"><li>${i}</li></c:if>
+					<c:if test="${i!=pg}">
+						<li><a href="market_list.ams?pg=${i}">${i}</a></li>
+					</c:if>
+				</c:forEach>
 			 </ul>
 	      	  <a href="">[다음]</a>
 	      	
 	      	</div> 
+	      	
+	      	
+	      	<%-- <p id="cur-page" class="margin-small">
+		<span class="strong">1</span> / 10 page
+	</p>
+	<div id="pager-wrapper" class="margin-small">
+		<div class="pager clear">			
+			<ul>
+				
+				<!-- 블록 범위 찍기 -->
+				<c:forEach begin="${fromPage}" end="${toPage}" var="i">
+					<c:if test="${i==pg}"><li>${i}</li></c:if>
+					<c:if test="${i!=pg}">
+						<li><a href="notice.htm?pg=${i}">${i}</a></li>
+					</c:if>
+				</c:forEach>
+				
+				
+			</ul>
+			
+		</div>
+	</div> --%>
 	      	
 	      	<div id="board_search" >
 	      		<form class="search_form" id="" action="market_search.ams" method="post">
