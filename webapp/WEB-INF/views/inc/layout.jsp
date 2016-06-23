@@ -11,6 +11,10 @@
 		<link href="index.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
+	
+	<!-- Notification -->
+	<tiles:insertAttribute name="Message_Notification"/>
+	
 	<!-- Header  영역  -->
 	<tiles:insertAttribute name="header"/>
 	

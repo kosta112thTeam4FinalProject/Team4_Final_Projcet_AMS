@@ -3,8 +3,36 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-
-
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		
+	
+		
+			timer = setInterval(function(){
+				
+		/* 	if('${LoingUser}' != '') { */
+				
+				$.ajax({
+					
+					 url : "message_readcount.ams",
+					 cache :false,
+					 /* data : read, */
+					 success : function(data) { 
+						 
+						
+					    console.log("읽지않은 쪽지 :  " + data);
+					     $('#msg_unread').empty();
+						 $('#msg_unread').append(data);				
+						 
+					 } //success
+					  
+				});	//ajax
+			/* }//if	 */
+		}, 10000 );//timer 1초에 한번씩
+		
+	}); //end 
+</script>
 
 <div id="ams-container">
 	<div id="ams-header">
@@ -32,14 +60,16 @@
 				${LoingUser}님 환영합니다. <!-- <a href="member_logout.ams"> -->
 				<a href="${pageContext.request.contextPath}/message_received.ams">
 				<img src="./resources/images/message_icon.png" alt="쪽지"/>
-				${total}</a>
+				<span id="msg_unread"></span></a>
 				&nbsp; &nbsp;<a href="${pageContext.request.contextPath}/logout">로그아웃</a>
 		     
 		</security:authorize>	
 		</div>
 
 		<div id="ams-header-menu">
-			<a href="${pageContext.request.contextPath}/member_join.ams">회원가입</a> | <a href="">비밀번호찾기</a>
+			<%-- <a href="${pageContext.request.contextPath}/member_join.ams">회원가입</a>  --%>
+			<a href="${pageContext.request.contextPath}/member_join_info.ams">회원가입</a>
+			 | <a href="">비밀번호찾기</a>
 
 		</div>
 	</div>
@@ -94,9 +124,9 @@
 					<li><a href="">에너지사용량조회</a></li>
 					<li><a href="">관리비등록</a></li>
 				</ul></li>
-				
-
 		</ul>
-		
 	</div>
 </div>
+
+	<!--  <div id="ams-side_1"></div>
+	      <div id="ams-side_2"></div>	  -->

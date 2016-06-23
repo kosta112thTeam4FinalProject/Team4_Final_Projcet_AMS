@@ -13,17 +13,11 @@ http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
 http://www.springframework.org/schema/context 
 http://www.springframework.org/schema/context/spring-context.xsd
 http://www.springframework.org/schema/task 
-<<<<<<< HEAD
 http://www.springframework.org/schema/task/spring-task-3.1.xsd
 http://www.springframework.org/schema/websocket 
 http://www.springframework.org/schema/websocket/spring-websocket.xsd">
              
-=======
-http://www.springframework.org/schema/task/spring-task-3.1.xsd" >   
 
-
-   
->>>>>>> Jinju
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	
 	<!-- Enables the Spring MVC @Controller programming model -->
@@ -50,7 +44,7 @@ http://www.springframework.org/schema/task/spring-task-3.1.xsd" >
 		<beans:property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>	
 	</beans:bean>
 	
-<<<<<<< HEAD
+
 	<!-- file upload 설정 -->
 	<beans:bean id="uploadPath" class="java.lang.String">
 		<beans:constructor-arg value="C:\\zzz\\upload">
@@ -71,7 +65,7 @@ http://www.springframework.org/schema/task/spring-task-3.1.xsd" >
 	</websocket:handlers>
 
 	<beans:bean id="myHandler" class="kr.co.AMS.Controller.SocketHandler" />
-=======
+
 	
 	<!-- JSON -->
 	<beans:bean id="jacksonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/> 
@@ -93,6 +87,6 @@ http://www.springframework.org/schema/task/spring-task-3.1.xsd" >
 			</beans:props>
 		</beans:property>
 	</beans:bean>
->>>>>>> Jinju
+
 
 </beans:beans>
