@@ -1,15 +1,12 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+    <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-
-	
-
 
 	      <div id="title_bar">	
 	         <span> 공지사항 </span> 
 	         <img src = "./resources/images/notice_title.png">   	
 	      </div>
-	      
 	      
 	      <div id="board">
 	      	<table>
@@ -21,7 +18,6 @@
 	      				<th>조회수</th>      			
 	      			</tr>      		
 	      		</thead>
-	      		
 	      		<tbody>
 	      			<tr>
 	      			  <td>1 &nbsp; <img src="./resources/images/notice_tag.png"> <a href="notice_detail.ams">공지사항 테스트 </a></td>
@@ -29,13 +25,18 @@
 	      			  <td> 2016.03.10</td>
 	      			  <td>5</td>
 	      			</tr>
-	      			<tr>
-	      			  <td>${notice.noti_idx} <img src="./resources/images/notice_tag.png"> <a href="notice_detail.ams?seq=${notice.noti_idx}"> ${notice.noti_title} </a> </td>
-	      			  <td> ${notice.noti_writer} </td>
-	      			  <td> ${notice.noti_regdate} </td>
-	      			  <td>${notice.noti_hit}</td>
-	      			</tr>
-	      			
+	     	   <!-- 글의 list 를 뿌려주는 for 문 -->
+	     	   <c:forEach items="${list}" var="m">
+                  <tr>
+                    <td class="board_idx">${m.board_idx} 
+                    <img src= "./resources/images/notice_tag.png"> 
+                    <a href="notice_detail.ams?board_idx=${m.board_idx}"> ${m.title} </a> 
+                    </td>
+                    <td class="writer"> ${m.writer} </td>
+                    <td class="regdate"> ${m.regdate} </td>
+                    <td class="hit">${m.hit}</td>
+                  </tr>
+                  </c:forEach>
 	      			      			    	      		
 	      		</tbody>      	     	
 	      	</table>
@@ -47,16 +48,18 @@
 	      	  
 	      	  <a href="">[이전]</a>
 	      	  <ul>
-				<li><a class=strong href="">1</a></li>
-				<li><a href="">2</a></li>
-				<li><a href="">3</a></li>
-				<li><a href="">4</a></li>
-				<li><a href="">5</a></li>
-			 </ul>
+	      	  <!-- 하단의 페이징 처리를 위한 for 문 -->
+	  		<c:forEach begin="${fromPage}" end="${toPage}" var="i">
+               <c:if test="${i==pg}"><li>${i}</li></c:if>
+               <c:if test="${i!=pg}">
+                  <li><a href="notice_list.ams?pg=${i}">${i}</a></li>
+               </c:if>
+            </c:forEach>
+          </ul>
 	      	  <a href="">[다음]</a>
 	      	
 	      	</div> 
-	      	
+	      	<!-- 검색 할 부분 -->
 	      	<div id="board_search" >
 	      		<form class="search_form" id="" action="notice_search.ams" method="post">
 	      		   <select id="" >

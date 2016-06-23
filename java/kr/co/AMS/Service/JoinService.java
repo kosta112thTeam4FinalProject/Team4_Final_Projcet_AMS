@@ -1,6 +1,7 @@
 package kr.co.AMS.Service;
 
 import java.sql.SQLException;
+//입주민 회원가입
 import java.util.Enumeration;
 import java.util.HashMap;
 
@@ -21,6 +22,7 @@ import kr.co.AMS.Model.vo.Member_Certification;
 
 
 //회원관련
+
 @Service
 public class JoinService {
 	
@@ -213,10 +215,15 @@ public class JoinService {
 		Member_Dao member_dao = sqlSession.getMapper(Member_Dao.class);
 		
 		int result = member_dao.insertFamily(family);
+
 		
 		return result;
 	}
+
 	
+	
+
+
 	//3.3 회원가입_car
 	public int joinMembmerCar(Member_Car car) throws ClassNotFoundException, SQLException 
 	{
@@ -281,4 +288,5 @@ public class JoinService {
 		
 		return result;
 	}
+
 }

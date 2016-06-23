@@ -2,23 +2,18 @@ package kr.co.AMS.Controller;
 
 import java.sql.SQLException;
 
-import javax.mail.internet.MimeMessage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import kr.co.AMS.Model.vo.Family;
 import kr.co.AMS.Model.vo.Member;
-import kr.co.AMS.Model.vo.Member_Car;
 import kr.co.AMS.Model.vo.Member_Certification;
 import kr.co.AMS.Service.JoinService;
 
@@ -30,8 +25,20 @@ public class JoinController {
 	private JoinService joinService;
 	
 	@Autowired
-	private JavaMailSender mailSender;
+	private JavaMailSender mailSender;	
+	
+
+	//1.회원가입 페이지 
+	/*@RequestMapping("member_join.ams")
+	public String mebmer_Join_View() throws ClassNotFoundException, SQLException
+	{
+		System.out.println("Con_회원가입 페이지 보기");	
 		
+		return "Member.Join.Member_Join";
+	}
+		*/
+
+	
 	//1. 회원가입 페이지_약관동의
 	@RequestMapping("member_join.ams")
 	public String mebmer_Join_Step_1_View() 
@@ -112,4 +119,5 @@ public class JoinController {
 		return "home.index";		
 		
 	}
+
 }

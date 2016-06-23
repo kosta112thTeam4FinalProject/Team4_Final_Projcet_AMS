@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.AMS.Model.DAO.Market_boardDao">
+
+	<select id="market_List" resultType="kr.co.AMS.Model.vo.Market_board">
+		<!-- SELECT * FROM TB_MARKET -->
+		select * from
+		(
+		select rownum rnum, e.* from (
+		select * from TB_MARKET
+		order by ref desc, depth asc
+		) e
+		) where rnum >= #{start} and rnum &lt;= #{end}
+	</select>
+
+	<select id="market_Detail" resultType="kr.co.AMS.Model.vo.Market_board">
+		SELECT * FROM TB_MARKET
+		where board_idx = #{board_idx}
+	</select>
+
+	<select id="market_getCount" resultType="Integer">
+		<!-- String field => param1, String query=>param2 -->
+		SELECT COUNT(*) FROM TB_MARKET
+		<!-- ${있는 그대로} , #{형변환} 차이점 param1 => AA ${param1} => AA (column 명 , Table 
+			명 ) #{param1} => 'AA' param2 = > 88 ${param2} => 88 #{param2} => 88 oracle 
+			: where ename like '%kim%' # => LIKE '%'kim'%' $ => LIKR '%kim%' -->
+	</select>
+
+	<insert id="market_Insert">
+		<selectKey order="BEFORE" keyProperty="ref" resultType="integer">
+			select nvl(max(ref),0)+1 as ref from TB_MARKET
+		</selectKey>
+		INSERT INTO TB_MARKET(BOARD_IDX, writer, title, CONTENT, NOTICE, REF,
+		DEPTH
+		, STEP, REGDATE, HIT, KIND)
+		VALUES( seq_market.nextval, #{writer},
+		#{title}, #{content}, #{notice}, #{ref}, 0, 0, SYSDATE,
+		0, #{kind})
+	</insert>
+
+	<delete id="market_Delete">
+		delete TB_MARKET where board_idx = #{board_idx}
+	</delete>
+
+	<update id="market_Update">
+		UPDATE TB_MARKET SET TITLE=#{title}, CONTENT=#{content}, kind=#{kind}
+		WHERE board_idx=#{board_idx}
+	</update>
+
+	<update id="market_Hit_Update">
+		update tb_market set hit=hit+1 where board_idx=#{board_idx}
+	</update>
+
+	<update id="market_Depth">
+		update tb_market set depth = depth + 1 where ref=#{ref} and depth>#{depth}
+	</update>
+
+	<insert id="market_Re_Insert">
+		INSERT INTO TB_MARKET(BOARD_IDX, writer, title, CONTENT, NOTICE, REF,
+		DEPTH,
+		STEP, REGDATE, HIT, KIND)
+		VALUES( seq_market.nextval, #{writer},
+		#{title}, #{content}, 'N', #{ref}, #{depth}+1, #{step}+1, SYSDATE,
+		0,
+		#{kind})
+	</insert>
+
+	<insert id="market_Comment">
+		INSERT INTO tb_market_comment(comment_idx, board_idx,
+		writer, content, regdate, ref, depth ,step)
+		VALUES(
+		seq_market_comment.nextval, #{board_idx}, #{writer}, #{content},
+		SYSDATE, 0, 0, 0)
+	</insert>
+
+	<select id="market_CommentList" resultType="kr.co.AMS.Model.vo.Market_boardComment">
+		select * from
+		tb_market_comment where board_idx = #{board_idx} order by board_idx
+		asc
+	</select>
+	
+	<delete id="market_CommentAllDel">
+		delete from tb_market_comment where board_idx =
+		#{board_idx}
+	</delete>
+
+	<delete id="market_CommentDel">
+		delete from tb_market_comment where comment_idx =
+		#{comment_idx}
+	</delete>
+	
+	<update id="market_Comment_Update">
+		UPDATE tb_market_comment SET writer=#{writer}, CONTENT=#{content}
+		WHERE comment_idx=#{comment_idx}
+	</update>
+	
+	<select id="market_Comment_Detail" resultType="kr.co.AMS.Model.vo.Market_boardComment">
+		SELECT * FROM tb_market_comment
+		where comment_idx = #{comment_idx}
+	</select>
+
+</mapper> 

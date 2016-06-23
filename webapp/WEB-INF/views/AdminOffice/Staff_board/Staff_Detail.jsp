@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 	      
 	      <div id="title_bar">	
@@ -11,23 +12,30 @@
 	       	<table>
 				<tr>
 					<th>제목</th>
-					<td colspan="3">test제목</td>
+					<td colspan="3">${staff_board.title}</td>
 					<td colspan="2" class="right">
-					 <button><a href="staff_modify.ams">수정</a></button>
-					 <button><a href="staff_delete.ams">삭제</a></button></td>
+					 <button><a href="staff_modify.ams?board_idx=${staff_board.board_idx}">수정</a></button>
+					 <button><a href="staff_delete.ams?board_idx=${staff_board.board_idx}">삭제</a></button></td>
 				</tr>
 				<tr>
-					<th>등록일</th><td>2016.03.29</td>
-					<th>작성자</th><td>관리사무소</td>
-					<th>조회수</th><td>10</td>					
+					<th>등록일</th><td>${staff_board.regdate}</td>
+					<th>작성자</th><td>${staff_board.writer}</td>
+					<th>조회수</th><td>${staff_board.hit}</td>					
 				</tr>
-				<tr>
-					<th>첨부파일</th><td class="left" colspan="5">test.txt</td>
-				</tr>
+		<tr class="article-detail-row half-row">
+			<th class="article-detail-title">첨부파일</th>
+ 			<c:forEach var="row" items="${list}">
+				<input type="hidden" id="idx" value="${row.IDX }">
+				<td class="article-detail-data half-data">
+				<a href="download/downloadFile.ams?idx=${row.IDX}">${row.ORIGINAL_FILE_NAME}</a>
+				(${row.FILE_SIZE})
+				</td>
+			</c:forEach> 
+		</tr>
 		
 
 				<tr>
-					<td colspan="6"><textarea id="" name="" cols="100" rows="15">내용</textarea></td> 
+					<td colspan="6"><textarea id="" name="" cols="100" rows="15">${staff_board.content}</textarea></td> 
 					<!-- <td colspan="6">내용</td> -->
 				</tr>
 				
@@ -83,4 +91,3 @@
 	      </form>
 	      
 	      </div>
-	     

@@ -77,6 +77,17 @@
 
 #join_div_4 table {
     border-collapse: collapse;
+<<<<<<< HEAD
+    width: 100%;
+}
+
+#join_div_4 th, td {
+    padding: 8px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+}
+
+=======
     width: 80%;
    margin-left:150px; 
    
@@ -98,6 +109,7 @@
 
 
 
+>>>>>>> Sungjoong
 #input_num {
 	
 	padding: 20px;
