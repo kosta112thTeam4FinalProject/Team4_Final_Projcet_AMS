@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.AMS.Model.DAO.Complaint_boardDao">
+
+	<!-- 게시글 목록 출력 -->
+	<select id="getAllList" parameterType="hashmap"
+		resultType="kr.co.AMS.Model.vo.Complaint_board">
+		select board_idx, title, writer, regdate, hit, notice, depth from
+		(
+		select rownum rnum, c.* from (
+		select * from tb_complaints
+		<if test="search != null">
+			<if test="scp1 != null">
+			where ${scp1} like '%${search}%'
+			</if>
+			
+			<if test="scp2 != null">
+				or ${scp2} like '%${search}%'
+			</if>
+			
+			<if test="from != null and to != null">
+				and regdate between #{from} and #{to}
+			</if>
+		</if>
+		order by notice desc, ref desc, step asc, ${order} desc
+		) c
+
+		) where rnum >= #{start} and rnum <![CDATA[<=]]> #{end}
+	</select>
+
+	<!-- 전체 게시글 수 가져오기 -->
+	<select id="getComplaintsCount" resultType="Integer">
+		select count(*) from tb_complaints
+	</select>
+	
+	<!-- 검색한 글 전체 수 가져오기 -->
+	<select id="getSearchCount" parameterType="hashmap" resultType="Integer">
+		select count(*) from tb_complaints
+		<if test="scp1 != null">
+			where ${scp1} like '%${search}%'
+			</if>
+			
+			<if test="scp2 != null">
+				or ${scp2} like '%${search}%'
+			</if>
+			
+			<if test="from != null and to != null">
+				and regdate between #{from} and #{to}
+			</if>
+	</select>
+	
+	<!-- 게시글 작성 -->
+	<insert id="insertComplaint" useGeneratedKeys="true" keyProperty="board_idx">
+		<selectKey order="BEFORE" keyProperty="board_idx" resultType="Integer">
+			SELECT seq_complaints.nextval FROM dual
+		</selectKey>
+		INSERT INTO tb_complaints(board_idx, notice, writer, title, content, ref, hit)
+		VALUES( #{board_idx}, #{notice}, #{writer}, #{title}, #{content}, #{board_idx}, 0)
+	</insert>
+	
+	<!-- 게시글 상세 보기 -->
+	<select id="getComplaintDetail" resultType="kr.co.AMS.Model.vo.Complaint_board">
+		select board_idx, title, writer, content, notice, ref, depth, step, regdate, hit
+		from tb_complaints where board_idx = #{board_idx}
+	</select>
+	
+	<!-- 게시글 삭제 -->
+	<delete id="deleteComplaint">
+		delete from tb_complaints where board_idx = #{board_idx}
+	</delete>
+	
+	<!-- 게시글 수정 -->
+	<update id="updateComplaint">
+		update tb_complaints set title=#{title}, content= #{content}
+		where board_idx = #{board_idx}
+	</update>	
+
+	<!-- 조회수 증가 -->
+	<update id="increaseHit">
+		update tb_complaints set hit = hit+1 where board_idx = #{board_idx}
+	</update>
+	
+	<!-- 답변 글 쓰기 -->
+	<insert id="insertReWrite" useGeneratedKeys="true" keyProperty="board_idx">
+		<selectKey order="BEFORE" keyProperty="board_idx" resultType="Integer">
+			SELECT seq_complaints.nextval FROM dual
+		</selectKey>
+		INSERT INTO tb_complaints(board_idx, notice, writer, title, content, ref, depth, step, hit)
+		VALUES(${board_idx}, #{notice}, #{writer}, #{title}, #{content}, #{ref}, ${depth}, ${step}, 0)
+	</insert>
+	
+	
+	<!-- 댓글 전체 수 -->
+	<select id="getCommentCount" resultType="Integer">
+		select count(*) from tb_complaints_comment
+	</select>
+	
+	<!-- 댓글 목록 출력 -->
+	<!-- 
+	<select id="getAllComment" parameterType="hashmap"
+		resultType="kr.co.AMS.Model.vo.Complaint_comment">
+		select comment_idx, board_idx, writer, content, regdate, ref, depth, step from
+		(
+		select rownum rnum, c.* from (
+			select * from tb_complaints_comment
+			order by ref desc, step asc, regdate #{order}
+		) c
+
+		) where rnum >= #{start} and rnum <![CDATA[<=]]> #{end}
+	</select>
+	-->
+	<select id="getAllComment" resultType="kr.co.AMS.Model.vo.Complaint_comment">
+		select comment_idx, board_idx, writer, content, regdate, ref, depth, step
+		from tb_complaints_comment
+		where board_idx = #{board_idx}
+		order by ref asc, step asc, regdate asc
+	</select>
+	
+	<!-- 댓글 등록 -->
+	<insert id="insertComment" useGeneratedKeys="true" keyProperty="comment_idx">
+		<selectKey order="BEFORE" keyProperty="comment_idx" resultType="Integer">
+			SELECT seq_complaints_comment.nextval FROM dual
+		</selectKey>
+		INSERT INTO tb_complaints_comment(comment_idx, board_idx, writer, content, regdate, ref, depth, step)
+		VALUES( #{comment_idx}, #{board_idx}, #{writer}, #{content}, sysdate, #{comment_idx}, 0, 0)
+	</insert>
+	
+	<!-- 댓글  -->
+	<select id="getComment" resultType="kr.co.AMS.Model.vo.Complaint_comment">
+		select comment_idx, board_idx, writer, content, regdate, ref, depth, step
+		from tb_complaints_comment where comment_idx = #{comment_idx}
+	</select>
+	
+	<!-- 댓글의 댓글 등록 -->
+	
+</mapper> 

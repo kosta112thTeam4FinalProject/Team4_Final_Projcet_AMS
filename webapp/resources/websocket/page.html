@@ -1,0 +1,155 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Your First WebSocket!</title>
+<style type="text/css">
+#header {
+    background-color:black;
+    color:white;
+    text-align:center;
+    padding:5px;
+}
+
+#output {
+    height:250px;
+    overflow:scroll;
+}
+</style>
+</head>
+<body>
+<script src="//code.jquery.com/jquery-1.10.2.js"></script>
+<script  src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script type="text/javascript" >
+
+		var wsUri = "ws://192.168.0.131:8090/websocket/websocket/echo.do";
+		
+		//var wsUri = "ws://localhost:8090/websocket/websocket/echo.do";
+		//websocket.*** 웹소켓 뒤에 붙는 함수는 제공하는 합수
+		//페이지가 시작되면 WebSocket 객체를 생성해서 onopen함수를 통해 세션을 시작한다
+		$(document).ready(function() {
+			websocket = new WebSocket(wsUri);
+			websocket.onopen = function(evt) {
+				onOpen(evt)
+			};
+			websocket.onerror = function(evt) {
+				onError(evt)
+			};
+
+		});
+
+		//센드를 클릭하면 text값을 dosend함수에 보내준다
+		function send_message() {
+			
+			doSend(textID.value);
+			
+
+
+			//websocket.onmessage를통해 메시지를 받아서 onMessage에 보내준다
+			websocket.onmessage = function(evt) {
+				onMessage(evt)
+			};
+			//스크롤 아래로 유지하기 위함
+			$(document).ready(function() {
+				var objDiv = document.getElementById("output");
+				objDiv.scrollTop = objDiv.scrollHeight; 
+			});
+		
+		}
+	
+		function init() {
+			output = document.getElementById("output");
+		}
+
+		function onOpen(evt) {
+			alert("채팅방에 입장하였습니다! 즐거운 대화 나누세요^^");
+			writeToScreen("채팅방에 입장하였습니다! 즐거운 대화 나누세요^^");
+
+		}
+
+		//입력받은것을 화면에 보여준다
+		function onMessage(evt) {
+		
+			writeToScreen("상대: " + evt.data+"\n");
+			//상대방이 글 썼을때도 스크롤이 내려가게 처리해줌
+			$(document).ready(function() {
+				var objDiv = document.getElementById("output");
+				objDiv.scrollTop = objDiv.scrollHeight; 
+			});
+		}
+		function onError(evt) {
+			writeToScreen('ERROR: ' + evt.data);
+		}
+
+		//화면에 찍어주고 웹소켓을 통해 보낸다
+		function doSend(message) {
+			writeToScreen("나: " + message+"\n");
+			websocket.send(message);
+			message ="";
+			
+	
+		}
+
+
+		function writeToScreen(message) {
+			var pre = document.createElement("p");
+			pre.style.wordWrap = "break-word";
+			pre.innerHTML = message;
+			output.appendChild(pre);
+		
+		}
+
+		//엔터키 먹음
+		function enterKey(event) {
+
+			if (event.keyCode = 13) { /* IE기준으로 설명 */
+
+				return false;
+			} else {
+				return true;
+			}
+		}
+
+
+		//disconnenct 경우, " 상대방이 퇴장하였습니다 " 말 나오게 하기 
+		function disconnect() {
+
+			var str="채팅방을 퇴장했습니다";
+			doSend(str);
+			//스크롤 아래로 유지 
+			$(document).ready(function() {
+				var objDiv = document.getElementById("output");
+				objDiv.scrollTop = objDiv.scrollHeight; 
+			});
+			
+			//웹소켓 종료
+			websocket.close();
+		}
+	      $("#textID").keypress(function(e) {
+	          if(e.which==13) {
+	        	  websocket.send(textID.value);
+	   	             textID.value = "";
+	   	          } 
+	   	       
+	   	       });
+
+		window.addEventListener("load", init, false);
+
+		
+	</script>
+	<h1 style="text-align: center;">온라인 반상회 채팅방</h1>
+	<br>
+	<div id="header" style="text-align: center;">
+		<form action="" onsubmit="return false" method="post">
+			<input id="textID" name="message"  type="text" value=""
+				onclick="this.value=''"> <input onclick="send_message()"
+				value="Send" type="submit"
+			 onkeypress="return enterKey(event);" >
+			
+		 <input id="disconntect" onclick="disconnect()"
+				type="submit" value="Disconnect" type="hidden"></input>	<br>
+		</form>
+	</div>
+	<div id="output"></div>
+
+</body>
+</html>

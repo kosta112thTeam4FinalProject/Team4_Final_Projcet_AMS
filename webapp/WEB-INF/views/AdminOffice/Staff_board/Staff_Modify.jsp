@@ -39,12 +39,12 @@
 				<tr>
 					<th>제목</th>
 					<td colspan="5">
-						<input type="text" name="noti_title" id="" value="수정할 글의 제목${staff.noti_title}" >
+						<input type="text" name="noti_title" id="" value="수정할 글의 제목${staff_board.title}" >
 					</td>
 				</tr>
 				<tr>
 				 	<td colspan="6"><textarea id="" name="" cols="100" rows="15" >
-				 	수정할 글의 내용이 보여질 예정${staff.noti_content}</textarea></td> 
+				 	수정할 글의 내용이 보여질 예정${staff_board.content}</textarea></td> 
 				</tr>
 				<tr>
 					<th>첨부파일</th><td colspan="5"></td>

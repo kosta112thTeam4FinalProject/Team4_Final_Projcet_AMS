@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.AMS.Model.DAO.Member_Dao">
+
+	<!-- //1.회원 가입 전 인증번호 생성 및 기본 사항 저장(insert) int insertMemberCertifi(Member_Certification 
+		member_certi) -->
+	<insert id="insertMemberCertifi" parameterType="kr.co.AMS.Model.vo.Member_Certification">
+		insert into
+		tb_certifi_member(userid, name, email, checknum, regdate)
+		values
+		(
+		#{userid},
+		#{name},
+		#{email},
+		#{checknum},
+		sysdate
+		)
+
+	</insert>
+
+
+	<!-- //2.회원 인증번호 일치 여부 확인(select) -->
+	<select id="selectMemberCheck" resultType="Integer">
+		select count(*) from tb_certifi_member where userid = #{userid} and name = #{name} and checknum = #{checknum}
+	</select>
+
+
+
+
+	<!-- //3. 1 회원 가입(insert) int insertMember(Member member) -->
+	<insert id="insertMember" parameterType="kr.co.AMS.Model.vo.Member">
+		insert into tb_MEMBER(userid, password, name, addr_1, addr_2, email, phone,	emerphone, birthday, regdate)
+		values
+		(
+			#{userid},
+			#{password},
+			#{name},
+			#{addr_1},
+			#{addr_2},
+			#{email},
+			#{phone},
+			#{emerphone},
+			#{birthday},
+			sysdate
+		)
+	</insert>
+
+
+
+	<!-- //3.2 회원 가입 시 세대구성원 입력(insert) int insertFamily(Family family) -->
+	<insert id="insertFamily" parameterType="kr.co.AMS.Model.vo.Family">
+		insert into
+		tb_family(userid, f_name, age)
+		values
+		(
+		#{userid},
+		#{f_name},
+		#{age}
+		)
+	</insert>
+
+
+	<!-- //3.3 회원 가입 시 차량 정보 입력(insert) int insertMemberCar(Member_Car car) -->
+	<insert id="insertMemberCar" parameterType="kr.co.AMS.Model.vo.Member_Car">
+		insert into
+		tb_member_car(userid, carname, carnumber)
+		values
+		(
+		#{userid},
+		#{carname},
+		#{carnumber}
+		)
+
+	</insert>
+
+
+	<!-- //4.회원 로그인 시 아이디 존재 및 비밀번호 일치 여부 확인(select) int memberLogin(Member 
+		memeber) -->
+	<select id="memberLogin" resultType="Integer" parameterType="kr.co.AMS.Model.vo.Member">
+
+		select count(*) from tb_MEMBER where userid=#{param1} and
+		password=#{param2}
+
+	</select>
+
+
+
+	<!-- //5.1 회원 정보 수정 시 상세 정보 가저오기_Member(select) Member memberDetail(String 
+		userid) -->
+	<select id="memberDetail" resultType="kr.co.AMS.Model.vo.Member">
+
+		select userid, name,
+		addr_1, addr_2, email, phone, emerphone, birthday,
+		regdate
+		from
+		tb_MEMBER where userid=#{userid}
+
+	</select>
+
+	<!-- //5.2 회원 정보 수정 시 상세 정보 가저오기_Family(select) Family memberFamilyDetail(String 
+		userid) -->
+	<select id="memberFamilyDetail" resultType="kr.co.AMS.Model.vo.Family">
+
+		select f_name, age
+		from tb_family where userid=#{userid}
+
+	</select>
+
+
+	<!-- //5.3 회원 정보 수정시 상세 정보 가져오기_Car(select) Member_Car memberCarDetail(String 
+		userid) -->
+	<select id="memberCarDetail" resultType="kr.co.AMS.Model.vo.Member_Car">
+
+		select carname,
+		carnumber from tb_member_car where userid=#{userid}
+
+	</select>
+
+	<!-- //6.1 회원 정보 수정 사항 반영_Member(update) int memberModify(Member member) -->
+	<update id="memberModify" parameterType="kr.co.AMS.Model.vo.Member">
+		update tb_MEMBER set
+		password=#{password},
+		email=#{email},
+		phone=#{phone},
+		emerphone=#{emerphone}
+		where userid=#{userid}
+
+	</update>
+
+	<!-- //6.2 회원 정보 수정 사항 반영_Family(update) int memberFamilyModify(Family family) -->
+	<update id="memberFamilyModify" parameterType="kr.co.AMS.Model.vo.Family">
+		update tb_family
+		set f_name=#{f_name},
+		age=#{age}
+		where userid=#{userid}
+	</update>
+
+	<!-- //6.3 회원 정보 수정 사항 반영_Member_Car(update) int memberCarwModify(Member_Car 
+		car) -->
+	<update id="memberCarModify">
+		update tb_member_car set carname=#{carname},
+		carnumber=#{carnumber}
+		where userid=#{userid}
+	</update>
+
+	<!-- //7. 비밀번호 찾기 시 회원 이메일 여부확인 Member isMemberEmail(String userid) -->
+	<select id="isMemberEmail">
+
+		select email from tb_MEMBER where userid=#{userid}
+
+	</select>
+
+
+
+	<!-- //8.회원전체목록 보기 List<Member> getAllMemberList(HashMap map) -->
+	<select id="getAllMemberList" parameterType="hashMap"
+		resultType="kr.co.AMS.Model.vo.Member">
+
+		select addr_1, userid, name, email, phone from
+
+		(
+		select rownum rnum,
+		m.* from
+		(
+		select * from tb_MEMBER
+		<if test="search != null">
+			where ${info} = #{search}
+		</if>
+		order by addr_1 asc, addr_2 asc
+
+		)m
+
+		)where rnum >=
+		#{start} and rnum &lt; = #{end}
+
+	</select>
+
+	<!-- / /9.회원 전체 수 int memberTotalCount() -->
+	<select id="memberTotalCount" resultType="Integer">
+
+		select count(*) from
+		tb_MEMBER
+
+	</select>
+
+
+	<!-- 검색한 회원 수  -->
+	<select id="getSearchCount" parameterType="hashmap" resultType="Integer">
+		select count(*) from tb_member where ${info} = #{search}
+	</select>
+	
+	
+
+	<!-- 인증 번호 저장 -->
+	<insert id="insertRegiNum">
+		insert into tb_certifi_member(userid, name, email, checknum, regdate)
+		values(#{userid}, #{name}, #{email}, #{checknum}, sysdate)
+	</insert>
+
+
+	<!-- 인증 번호 중복 체크 -->
+	<!-- int doubleCheck(int checknum) throws ClassNotFoundException, SQLException; -->
+	<update id="doubleCheck">
+		update tb_certifi_member set checknum = #{checknum}
+		where checknum = #{checknum}
+	</update>
+
+	<!-- 해당 아디이의 인증번호 불러오기 -->
+	<!-- int getRegiNum(String userid) throws ClassNotFoundException, SQLException; -->
+	<!-- <select id="getRegiNum" resultType="Integer"> select checknum from 
+		tb_certifi_member where userid = #{userid} </select> -->
+		
+	<!-- 인증번호 테이블에서 userid에 따른 정보 수집 -->
+	<!-- Member_Certification getCertiInfo(String userid) throws ClassNotFoundException, SQLException; -->
+	<select id="getCertiInfo" resultType="kr.co.AMS.Model.vo.Member_Certification">
+		select userid, name, email, checknum from tb_certifi_member where userid = #{userid}
+	</select>
+	
+	<!-- family member 저장 -->
+	<!-- int addFamilyMember(HashMap<String, Object> map) throws ClassNotFoundException, SQLException; -->
+	<insert id="addFamilyMember">
+		insert into tb_family(userid, f_name, age, gender)
+		values(#{userid}, #{f_name}, #{age}, #{gender})
+	</insert>
+	
+	
+	<!-- member 차명/차번호 저장 -->
+	<!-- int addMemberCars(Member_Car member_car) throws ClassNotFoundException, SQLException; -->
+	<insert id="addMemberCars">
+		insert into tb_member_car(userid, carname, carnumber) 
+		values (#{userid}, #{carname}, #{carnumber})
+	</insert>
+	
+	<!-- Role 부여 -->
+	<!-- int assignRole(String userid) throws ClassNotFoundException, SQLException; -->
+	<insert id="assignRole">
+		insert into tb_authority(userid, role_name) 
+		values(#{userid}, 'ROLE_USER')	
+	</insert>
+</mapper>

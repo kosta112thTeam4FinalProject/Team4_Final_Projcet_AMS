@@ -1,0 +1,299 @@
+@CHARSET "UTF-8";
+#title_bar {
+	padding: 20px;
+	margin-bottom: 20px;
+	border-bottom: 1px solid #bcbcbc;
+	position: relative;
+	/* background-img:url(./resources/images/notice_title.png); */
+}
+
+#title_bar img {
+	/* float: right; */
+	width: 100% /*  margin-right: 10px;			 */
+}
+
+#title_bar span {
+	font-family: 맑은고딕;
+	font-weight: bold;
+	font-size: xx-large;
+	padding: 10px;
+	padding-top: 20px;
+	color: white;
+	text-align: left;
+	position: absolute;
+}
+
+#management_memu {
+	
+	padding: 20px;
+	margin-bottom: 0px;
+	/* border-bottom: 1px solid #bcbcbc; */
+	position: relative;	
+	margin-left:300px;
+}
+#member_reg_ok{
+
+
+ padding: 20px;
+	margin-bottom: 20px;
+	/* border-bottom: 1px solid #bcbcbc; */
+	font-family: 맑은고딕;
+	color: gray;
+
+}
+
+#member {
+	
+	padding: 20px;
+	margin-bottom: 20px;
+	/* border-bottom: 1px solid #bcbcbc; */
+	font-family: 맑은고딕;
+	color: gray;
+}
+#member_list {
+	
+	width: 100%;
+	border: 0;
+}
+
+#member_list table thead tr th {
+	padding: 8px;
+	text-align: center;
+	border-bottom: 1px solid #ddd;
+}
+
+#member_list table tbody tr td {
+	padding: 8px;
+	text-align: center;
+	border-bottom: 1px solid red;
+}
+
+#member_list table tbody a {
+	/*  display:block;  */
+	text-decoration: none
+}
+
+#member_list table  tbody tr:hover {
+	background-color: #f5f5f5
+}
+
+#member_list table tbody td:nth-child(1) {
+	text-align: left;
+}
+
+#member_list_page {
+	padding: 20px;
+	/* height :10px;   */ /* 추후 수정*/
+	margin-bottom: 20px;
+	border-bottom: 1px solid #bcbcbc;
+	color: gray;
+	/* position: inherit; */
+	display: inline-block;
+	text-decoration: none;
+	font-family: 맑은고딕;
+}
+
+#member_list_page a, #member_list_page ul, #member_list_page li {
+	float: left;
+}
+
+#member_list_page ul li a:hover {
+	text-decoration: underline;
+}
+
+.strong {
+	color: #F5A9A9;
+	font-weight: bold;
+}
+
+#member_search {
+	padding: 20px;
+	padding-top: 0px;
+	margin-bottom: 20px;
+	border-bottom: 1px solid #bcbcbc;
+}
+
+
+
+#member_reg {
+	
+	padding: 20px;
+	margin-bottom: 20px;
+	/* border-bottom: 1px solid #bcbcbc; */
+	font-family: 맑은고딕;
+	color: gray;
+	/* margin-left:20%; */
+	margin-left:150px;
+}
+#member_reg table{
+	
+	width: 80%;
+	border: 0;
+}
+
+#member_reg table tr th {
+	padding: 8px;
+	text-align: center;
+	border-bottom: 1px solid #ddd;
+}
+
+#member_reg table tbody tr td {
+	padding: 8px;
+	text-align: center;
+	border-bottom: 1px solid red;
+}
+
+#member_reg table  a {
+	/*  display:block;  */
+	text-decoration: none
+}
+
+#member_reg table  tbody tr:hover {
+	background-color: #f5f5f5
+}
+
+#member_reg table tbody td:nth-child(1) {
+	text-align: left;
+}
+
+.search_form {
+	
+}
+
+/* 게시판_상세보기  */
+#board_content {
+	/*  width:100%; */
+	padding: 20px;
+	/* padding-left:100px; */
+	/* margin : auto; */
+	margin-bottom: 20px;
+	border-bottom: 1px solid #bcbcbc;
+	font-family: 맑은고딕;
+	color: gray;
+}
+
+#board_content table {
+	width: 80%;
+	margin: auto;
+	/* border: 1px groove black;	 */
+}
+
+#board_content table tr {
+	border-bottom: 1px solid #ddd;
+}
+
+#board_content table tr, th, td {
+	padding: 8px;
+	width: 20%;
+	height: 20%;
+	text-align: center;
+	border-bottom: 1px solid red;
+}
+
+/* 게시판 댓글  */
+#reply_write, #board_reply {
+	padding: 20px;
+	/* padding-left:100px; */
+	/* margin : auto; */
+	margin-bottom: 20px;
+	border-bottom: 1px solid #bcbcbc;
+	font-family: 맑은고딕;
+	color: gray;
+	background-color: #F2F2F2;
+}
+
+#reply_write sub {
+	padding-left: 100px;
+}
+
+#reply_write table, #board_reply table {
+	width: 80%;
+	margin: auto;
+}
+
+#board_reply table tr, th, td {
+	padding: 8px;
+	width: 20%;
+	height: 20%;
+	text-align: left;
+	border-bottom: 1px solid red;
+}
+
+#reply_write table tr, th, td {
+	padding: 8px;
+	width: 20%;
+	height: 20%;
+	text-align: left;
+	border-bottom: 1px solid red;
+}
+
+.left {
+	text-align: left;
+}
+
+.right {
+	text-align: right;
+}
+
+.center {
+	text-align: center;
+}
+
+a {
+	text-decoration: none;
+}
+
+.reg_button {
+	float: right;
+}
+
+@media all screen and (max-width:300px) {
+	#ams-container {
+		width: auto;
+	}
+
+	#join_div_2 {
+		float: none;
+		width: auto;
+		height: auto;
+	}
+	
+	#join_div_3 {
+		float: none;
+		width: auto;
+		height: auto;
+	}
+	
+	#join_div_4 {
+		float: none;
+		width: auto;
+		height: auto;
+	}
+	
+	#join_div_5 {
+		float: none;
+		width: auto;
+		height: auto;
+	}
+	#board_page {
+		float: none;
+		width: auto;
+		height: auto;
+	}
+	
+	#board_content {
+		float: none;
+		width: auto;
+		height: auto;
+	}
+	#board_reply {
+		float: none;
+		width: auto;
+		height: auto;
+	}
+	#reply_write {
+		float: none;
+		width: auto;
+		height: auto;
+	}
+}
