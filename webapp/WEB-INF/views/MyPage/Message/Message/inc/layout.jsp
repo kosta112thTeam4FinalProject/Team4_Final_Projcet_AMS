@@ -11,9 +11,12 @@
 		<%-- <link href='<tiles:getAsString name="css"/>' type="text/css" rel="stylesheet"/> --%> 
 		
 	    <link href="./css/base.css" type="text/css" rel="stylesheet" />
-		<link href="./css/join.css" type="text/css" rel="stylesheet" />
+		<link href="./css/board.css" type="text/css" rel="stylesheet" />
 	</head>
 	<body>
+	<!-- Notification -->
+	<tiles:insertAttribute name="Message_Notification"/>
+	
 	<!-- Header  영역  -->
 	<tiles:insertAttribute name="header"/>
 	

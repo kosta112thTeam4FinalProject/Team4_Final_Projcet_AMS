@@ -9,7 +9,8 @@
  	 <!-- 1. return home(main).index --> 	
 	 <definition name="home.*" template="/WEB-INF/views/inc/layout.jsp">
 		<put-attribute name="header"  value="/WEB-INF/views/inc/header.jsp"/>
-		<put-attribute name="footer"  value="/WEB-INF/views/inc/footer.jsp"/>		
+		<put-attribute name="footer"  value="/WEB-INF/views/inc/footer.jsp"/>
+		<put-attribute name="Message_Notification" value="/WEB-INF/views/inc/Message_Notification.jsp"/>		
 		<put-attribute name="content" value="/WEB-INF/views/{1}.jsp"/>	
 	 </definition>
 	 
@@ -22,8 +23,12 @@
 		<put-attribute name="css"    value="../resources/{1}/{2}.css"/> 
 			
 		<put-attribute name="footer"  value="/WEB-INF/views/inc/footer.jsp"/>
-		
+		<put-attribute name="Message_Notification" value="/WEB-INF/views/inc/Message_Notification.jsp"/>
 		<put-attribute name="content" value="/WEB-INF/views/{1}/{2}/{3}.jsp"/>	
 	 </definition>
+	 
+	 
+	 
+	 
  
  </tiles-definitions>
