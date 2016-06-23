@@ -88,12 +88,12 @@
 
 			<li><a href="#news">관리사무소</a>
 				<ul>
-					<li><a
-						href="${pageContext.request.contextPath}/complain_list.ams">민원
-							접수처리</a></li>
-					<li><a
-						href="${pageContext.request.contextPath}/notice_list.ams">공지사항</a></li>
-					<li><a href="${pageContext.request.contextPath}/apt_calendar.ams">아파트 일정</a></li>
+					<li><a href="${pageContext.request.contextPath}/complain_list.ams">민원접수처리</a></li>
+					<li><a href="${pageContext.request.contextPath}/Complain_Calendar.ams">보수처리 예약등록(admin)</a></li>
+                    <li><a href="${pageContext.request.contextPath}/complainCal_get.ams">보수처리 예약(user)</a></li>
+	                <li><a href="${pageContext.request.contextPath}/notice_list.ams">공지사항</a></li>
+	                <li><a href="${pageContext.request.contextPath}/apt_calendar.ams">아파트 일정(admin)</a></li>
+	                <li><a href="${pageContext.request.contextPath}/apt_calendar_user.ams">아파트 일정(user)</a></li>
 					<li><a href="">운영정보공개</a></li>
 					<li><a href="">관리소 소개</a></li>
 					<li><a href="${pageContext.request.contextPath}/member_list.ams">회원관리</a></li>
@@ -112,8 +112,8 @@
 
 			<li><a href="#about">입주민 공간</a>
 				<ul>
-					<li><a href="">온라인 반상회</a></li>
-					<li><a
+					<li><a href="${pageContext.request.contextPath}/web_socket.ams">온라인 반상회</a></li>
+              		<li><a
 						href="${pageContext.request.contextPath}/market_list.ams">벼룩시장</a></li>
 					<li><a
 						href="${pageContext.request.contextPath}/anonymous_list.ams">익명게시판</a></li>
