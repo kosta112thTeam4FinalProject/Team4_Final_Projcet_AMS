@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.AMS.Model.DAO.APTCalendar_Dao">
+
+	<select id="getCalendar" resultType="kr.co.AMS.Model.vo.APTCalendar_Dto">
+		select * from aptcalendar
+	</select>
+	
+	<insert id="insertCalendar">
+		insert into aptcalendar(cal_idx, title, start_cal, end_cal) 
+		values(cal_seq.nextval, #{title}, #{start_cal}, #{end_cal})
+	</insert>
+	
+	<delete id="deleteCalendar">
+		delete from aptcalendar where cal_idx = #{cal_idx}
+	</delete>
+	
+	<update id="resizeCalendar">
+		update aptcalendar set end_cal = #{end_cal} where title = #{title}
+	</update>
+
+</mapper>

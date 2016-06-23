@@ -1,0 +1,273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.AMS.Model.DAO.Message_Dao">
+
+	<!-- //1.1 받은쪽지함 목록(select) 
+	    public List<Receive_Message> getReceiveMsg(HashMap map)
+	-->
+	<select id="getReceiveMsg" parameterType="hashMap"
+		resultType="kr.co.AMS.Model.vo.Receive_Message">
+
+		select * from 
+		( 
+			select rownum rnum, r. * from 
+										( select * from tb_receive_message where userid=#{userid} 
+										  order by receive_date desc
+										)r 							
+		 ) 
+		where userid=#{userid} and rnum >= #{start} and rnum <![CDATA[<=]]> #{end}
+
+	</select>
+
+	<!-- //1.2 받은쪽지 전체 건수(select count) public int getReceiveTotal(String userid) -->
+	<select id="getReceiveTotal" resultType="Integer">
+		select count(*) from tb_receive_message where userid=#{userid}
+	</select>
+
+	<!-- //2.1 보낸쪽지함 목록(select) public List<Message> getSenderMsg(HashMap map) -->
+	<select id="getSendMsg" parameterType="hashMap"
+		resultType="kr.co.AMS.Model.vo.Send_Message">
+		select send_idx, userid, sender, title, content, TO_CHAR(send_date, 'YYYY-MM-DD') as send_date from
+		(
+			select rownum rnum, s. * from (
+											select * from tb_send_message where sender=#{sender}
+											order by send_date desc
+										)s
+		)where sender=#{sender} and rnum >= #{start} and rnum <![CDATA[<=]]> #{end}
+	</select>
+
+	<!-- //2.2 보낸쪽지함 전체 건수(select count) public int getSenderTotal(String sender) -->
+
+	<select id="getSendTotal" resultType="Integer">
+		select count(*) from tb_send_message where sender=#{sender}
+	</select>
+	
+
+	<!-- //3.1 받은 쪽지 상세보기(select) Receive_Message detailReceiveMessage(int receive_idx) -->
+	<select id="detailReceiveMessage" resultType="kr.co.AMS.Model.vo.Receive_Message">
+
+		select receive_idx, userid, sender, title, content
+		from tb_receive_message where receive_idx=#{receive_idx}
+
+	</select>
+	
+	<!-- //3.2 보낸 쪽지 상세보기(select) Send_Message detailSendMessage(int send_idx) -->
+	<select id="detailSendMessage" resultType="kr.co.AMS.Model.vo.Send_Message">
+
+		select send_idx, userid, sender, title, content, 
+		TO_CHAR(send_date, 'YYYY-MM-DD') as send_date
+		from tb_send_message where send_idx=#{send_idx}
+
+	</select>
+
+	<!-- //4.1 쪽지쓰기_받은 쪽지함(insert)
+		int insertReceiveMessage(Receive_Message receive_message) -->
+	<insert id="insertReceiveMessage" parameterType="kr.co.AMS.Model.vo.Receive_Message">
+		<selectKey order="BEFORE" keyProperty="receive_idx" resultType="Integer">
+			select seq_tb_receive_message.nextval from dual
+		</selectKey>
+		insert into tb_receive_message
+		(receive_idx, userid, sender, title, content)
+		values
+		(
+		#{receive_idx},
+		#{userid},
+		#{sender},
+		#{title},
+		#{content}
+
+		)
+
+	</insert>
+	
+	<!-- //4.2 쪽지쓰기_보낸 쪽지함(insert)
+	    int insertSendMessage(Send_Message send_message) -->
+	<insert id="insertSendMessage" parameterType="kr.co.AMS.Model.vo.Send_Message">
+		<selectKey order="BEFORE" keyProperty="send_idx" resultType="Integer">
+			select seq_tb_send_message.nextval from dual
+		</selectKey>
+		insert into tb_send_message
+		(send_idx, userid, sender, title, content)
+		values
+		(
+		#{send_idx},
+		#{userid},
+		#{sender},
+		#{title},
+		#{content}
+
+		)
+	</insert>
+
+	<!-- //5.1 받은 쪽지 삭제(delete)
+	 int deleteReceiveMessage(int receive_idx) -->
+	<delete id="deleteReceiveMessage">
+
+		delete from tb_receive_message where receive_idx=#{receive_idx}
+
+	</delete>
+	
+	<!-- //5.2 보낸 쪽지 삭제(delete)
+     int deleteSendMessage(int send_idx) -->
+	<delete id="deleteSendMessage">
+
+		delete from tb_send_message where send_idx=#{send_idx}
+
+	</delete>
+
+	<!-- //5.3 받은 쪽지삭제_checkbox(delete)
+	 int checkDeleteRecMsg(ArrayList list)-->
+	<delete id="checkDeleteRecMsg" parameterType="java.util.ArrayList">
+		delete from tb_receive_message
+		<where>
+			receive_idx in
+			<foreach collection="list" item="item" separator="," open="("
+				close=")">
+
+				#{item}
+
+			</foreach>
+		</where>
+	</delete>
+	
+	<!-- //5.4 보낸 쪽지삭제_checkbox(delete)
+	 int checkDeleteSendMsg(ArrayList list)-->
+	<delete id="checkDeleteSendMsg" parameterType="java.util.ArrayList">
+		delete from tb_send_message
+		<where>
+			send_idx in
+			<foreach collection="list" item="item" separator="," open="("
+				close=")">
+
+				#{item}
+
+			</foreach>
+		</where>
+	</delete>
+
+	<!-- //6.1 쪽지 답장하기(받은 쪽지함)(insert)
+	 int reWriteRecMessage(Receive_Message receive_message) -->
+	<insert id="reWriteRecMessage" parameterType="kr.co.AMS.Model.vo.Receive_Message">
+		<selectKey order="BEFORE" keyProperty="receive_idx" resultType="Integer">
+			select seq_tb_receive_message.nextval from dual
+		</selectKey>
+		insert into tb_receive_message
+		(receive_idx, userid, sender, title, content)
+		values
+		(
+		#{receive_idx},
+		#{userid},
+		#{sender},
+		#{title},
+		#{content}
+
+		)
+
+	</insert>
+	
+	<!-- //6.2 쪽지 답장하기(보낸 쪽지함)(insert)
+	 int reWriteSendMessage(Send_Message send_message) -->
+	<insert id="reWriteSendMessage" parameterType="kr.co.AMS.Model.vo.Send_Message">
+		<selectKey order="BEFORE" keyProperty="send_idx" resultType="Integer">
+			select seq_tb_send_message.nextval from dual
+		</selectKey>
+		insert into tb_send_message
+		(send_idx, userid, sender, title, content)
+		values
+		(
+		#{send_idx},
+		#{userid},
+		#{sender},
+		#{title},
+		#{content}
+
+		)
+
+	</insert>
+
+	<!-- //7.1 받은 쪽지함 검색(select)
+	 List<Receive_Message> searchbyReceiveMsg(HashMap map) -->
+	<select id="searchbyReceiveMsg" parameterType="hashMap"
+		resultType="kr.co.AMS.Model.vo.Receive_Message">
+		select
+		receive_idx, hit, userid, sender, title, content, read,
+		receive_date
+		from tb_receive_message
+		<where>
+			<if test="column != null">
+				${column} like '%' || #{search} || '%'
+			</if>
+
+			<if test="column != null">
+				and userid = #{userid} order by receive_date desc
+			</if>
+		</where>
+
+	</select>
+
+	<!-- //7.2 보낸 쪽지함 검색(select)
+     List<Send_Message> searchbySendMsg(HashMap map) -->
+	<select id="searchbySendMsg" parameterType="hashMap"
+		resultType="kr.co.AMS.Model.vo.Send_Message">
+		select
+		send_idx, userid, sender, title, content, send_date
+		from tb_send_message
+		<where>
+			<if test="column != null">
+				${column} like '%' || #{search} || '%'
+			</if>
+
+			<if test="column != null">
+				and sender = #{sender} order by send_date desc
+			</if>
+		</where>
+
+	</select>
+
+	<!-- //8.쪽지 읽음 여부 표시(update)
+	 int updateHit(int receive_idx) -->
+	<update id="updateHit">
+
+		update tb_receive_message set hit = hit +1 where receive_idx=#{receive_idx}
+
+	</update>
+
+	<!-- ///9.읽지 않은 쪽지 표시(select)
+	 int getReadCount(int receive_idx)  -->
+	<select id="getUnReadCount" resultType="Integer">
+	
+		select count(*) from tb_receive_message where userid=#{userid} and hit = 0
+
+	</select>
+
+	<!-- //10.쪽지 읽음/읽지 않음 여부 표시(update)
+	 int updateRead() -->
+	<update id="updateRead">
+		update tb_receive_message set read='Y' where hit > 0
+	</update>
+	
+	<!-- //11.쪽지 알람_Notification
+	  List<Receive_Message> notificationCheck(HashMap map)
+	-->
+	<select id="notificationCheck"  parameterType="hashMap" resultType="kr.co.AMS.Model.vo.Receive_Message">	
+	   select receive_idx, sender 
+	   from tb_receive_message
+	   where userid=#{userid} and msgAlarm=0	
+	</select>
+	
+	<!-- //12.쪽지 알람상태 변경
+	     int msgAlarmChange(Receive_Message receive_message)
+	 -->
+	 <update id="msgAlarmChange">
+	 
+	 	update tb_receive_message set msgAlarm = 1
+	 	where receive_idx=#{receive_idx} and userid=#{userid}
+	 
+	 </update>
+
+
+
+</mapper>
