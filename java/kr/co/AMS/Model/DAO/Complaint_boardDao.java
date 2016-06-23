@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import kr.co.AMS.Model.vo.Complaint_board;
+import kr.co.AMS.Model.vo.Complaint_comment;
 
 public interface Complaint_boardDao {
 	
@@ -18,7 +19,7 @@ public interface Complaint_boardDao {
 	int getSearchCount(HashMap<String, Object> map) throws ClassNotFoundException, SQLException;
 	
 	// 3. 게시글 등록
-	int insertComplaint(Complaint_board complaints_board) throws ClassNotFoundException, SQLException;
+	int insertComplaint(Complaint_board complaint_board) throws ClassNotFoundException, SQLException;
 	
 	// 게시글 상세 보기
 	Complaint_board getComplaintDetail(int board_idx) throws ClassNotFoundException, SQLException;
@@ -31,8 +32,25 @@ public interface Complaint_boardDao {
 	
 	// 조회수 증가
 	int increaseHit(int board_idx) throws ClassNotFoundException, SQLException;
-/*
 	
+	// REWRITE
+	int insertReWrite(Complaint_board complaint_board) throws ClassNotFoundException, SQLException;
+	
+	// 댓글 전체 수
+	int getCommentCount() throws ClassNotFoundException, SQLException;
+	
+	// 댓글 목록
+	// List<Complaint_comment> getAllComment(HashMap<String, Object> map) throws ClassNotFoundException, SQLException;
+	List<Complaint_comment> getAllComment(int board_idx) throws ClassNotFoundException, SQLException;
+	
+	// 댓글 등록
+	int insertComment(Complaint_comment complaint_comment) throws ClassNotFoundException, SQLException;
+	
+	// 해당 댓글
+	Complaint_comment getComment(int comment_idx) throws ClassNotFoundException, SQLException;
+	
+	
+	/*
 	   
 	   //2. 익명게시판 글 상세보기(select single row)
 	   Anonymous_board getAnonymous(int board_idx)throws SQLException, ClassNotFoundException;

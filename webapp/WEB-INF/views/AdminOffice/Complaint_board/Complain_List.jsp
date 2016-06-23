@@ -5,53 +5,6 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<%-- 
-<%
-	SimpleDateFormat df = new SimpleDateFormat("yyyy/mm/dd");
-	Date d = new Date();
-	
-	Date d2 = df.parse(df.format(d));
-
-%>
- --%>
- 
-<!-- <script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
-<script type="text/javascript">
-	$(document).ready(function(){
-		$.ajax({
-			url:"uploadAjax.ams",
-			data:formData,
-			dataType:"text",
-			processData:false,
-			contentType:false,
-			type:"POST",
-			
-			success: function(data){
-				
-				console.log(data);
-				console.log(checkImageType(data));
-				
-				var str = "";
-				if(checkImageType(data)){
-					
-					str ="<div>"
-						+"<a href=displayFile?fileName="+getImageLink(data)+">"
-						+"<img src='displayFile.ams?fileName="+data+"'/>"
-						+ "</a><small data-src="+data+">X</small></div>";
-				} else{
-					str = "<div><a href='displayFile.ams?fileName="+data+"'>"
-						+ getOriginalName(data) +"</a>"
-						+ "<small data-src=" + data + ">X</small></div>"
-				}
-				
-				$(".uploadedList").append(str);
-			},
-			error:function(xhr){
-				alert(xhr.status + "Error");
-			}
-		})
-	});
-</script> -->
 
 <div id="title_bar">
 	<span> 민원게시판 </span> <img src="./resources/images/complain_title.png">
@@ -108,7 +61,15 @@
 							${complaint.board_idx}
 						</c:if>
 						<a href="complain_detail.ams?board_idx=${complaint.board_idx}&pg=${pg}&rowSize=${rowSize}&order=${order}&search=${search}&period=${period}&scope=${scope}">
-							${complaint.title} </a> 
+							<c:forEach begin="1" end="${complaint.depth}" step="1" varStatus="status">
+								<c:if test="${status.last}">▶</c:if>
+								<c:if test="${!status.last}">&nbsp;</c:if>
+							</c:forEach>
+							${complaint.title}
+						</a>
+						<%-- <c:if test="${date - complaint.regdate == 0}">
+							<img src ="./resources/images/new.gif" alt="새글"/>
+						</c:if>  --%>
 							
 							<!-- 새글 new 사진 띄우기 --> <%-- 
 					<%

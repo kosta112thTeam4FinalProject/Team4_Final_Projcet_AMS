@@ -13,18 +13,6 @@
 	       	<input type="hidden" name="board_idx" value="${complaint.board_idx }" /> <!-- 글 번호  -->
 	       	<table>
 				<tr>
-					<!-- 민원게시판의 카테고리를 민원으로만 하기위해 추후 수정 예정  -->
-					<!-- <th>카테고리</th>
-					<td colspan="1">
-						<select id="" name="">
-							<option selected="selected">민원</option>
-							<option>공지</option>
-							<option>대표</option>
-							<option>부녀회</option>
-							<option>노인회</option>						
-						</select>					
-					</td> -->
-					
 					<td>
 						<input type="checkbox" value=""  name="" id="">공지사항
 					</td>
