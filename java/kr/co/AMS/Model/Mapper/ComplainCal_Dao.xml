@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="kr.co.AMS.Model.DAO.ComplainCal_Dao">
+
+	<select id="getComplainCal" resultType="kr.co.AMS.Model.vo.ComplainCal_Dto">
+		select * from complaincal
+	</select>
+	
+	<insert id="insertComplainCal">
+		insert into complaincal(complain_idx, reserve_o, start_cal, end_cal) 
+		values(complaincal_seq.nextval, #{reserve_o}, #{start_cal}, #{end_cal})
+	</insert>
+	
+	<delete id="deleteComplainCal">
+		delete from complaincal where complain_idx = #{complain_idx}
+	</delete>
+	
+	<select id="getComplainCalContent" resultType="kr.co.AMS.Model.vo.ComplainCal_User_Dto">
+		select * from COMPLAINCAL_USER where complain_idx = #{complain_idx}
+	</select>
+	<!--
+	<update id="resizeCalendar">
+		update aptcalendar set end_cal = #{end_cal} where title = #{title}
+	</update>   -->
+	
+	<insert id="complainCal_Insert">
+		insert into COMPLAINCAL_USER(user_idx,complain_idx,user_id,content)
+		values(COMPLAINCAL_USER_seq.nextval,#{complain_idx},'id',#{content})
+	</insert>
+	
+	<select id="complainCal_userGet" resultType="integer">
+		SELECT COUNT(*) FROM COMPLAINCAL_USER where complain_idx = #{complain_idx}
+	</select>
+	
+	<update id="complainCal_Update">
+		update complaincal set reserve_o='예약 완료' where complain_idx=#{complain_idx}
+	</update>
+
+</mapper>
