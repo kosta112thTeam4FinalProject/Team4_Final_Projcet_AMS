@@ -29,14 +29,14 @@ public class JoinController {
 	
 
 	//1.회원가입 페이지 
-	@RequestMapping("member_join.ams")
+	/*@RequestMapping("member_join.ams")
 	public String mebmer_Join_View() throws ClassNotFoundException, SQLException
 	{
 		System.out.println("Con_회원가입 페이지 보기");	
 		
 		return "Member.Join.Member_Join";
 	}
-		
+		*/
 
 	
 	//1. 회원가입 페이지_약관동의
