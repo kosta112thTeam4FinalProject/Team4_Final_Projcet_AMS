@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import kr.co.AMS.Controller.ComplaintController;
 import kr.co.AMS.Model.DAO.Complaint_boardDao;
 import kr.co.AMS.Model.vo.Complaint_board;
+import kr.co.AMS.Model.vo.Complaint_comment;
 
 //민원게시판
 @Service
@@ -32,10 +33,6 @@ public class ComplaintService {
 			String search, String period, String scope) throws ClassNotFoundException, SQLException{
 		
 		Complaint_boardDao complaints_boardDao = sqlSession.getMapper(Complaint_boardDao.class);
-		
-		System.out.println(search);
-		System.out.println(period);
-		System.out.println(scope);
 		
 		int page = 1;
 		String strPg = pg;
@@ -178,8 +175,6 @@ public class ComplaintService {
 	// 게시글 작성하기
 	public int writeComplaint(Complaint_board complaints_board) throws ClassNotFoundException, SQLException{
 			
-		System.out.println(complaints_board.getNotice());
-		
 		if(complaints_board.getNotice() == null){
 			complaints_board.setNotice("N");
 		}
@@ -191,7 +186,6 @@ public class ComplaintService {
 		return result;
 	}
 	
-	// 파일 업로드
 	
 	// 게시글 상세보기
 	public Complaint_board getComplaintDetail(int board_idx) throws ClassNotFoundException, SQLException{
@@ -202,6 +196,107 @@ public class ComplaintService {
 		
 		return complaints_board;
 	}
+	
+	// 댓글 등록
+	public int writeComment(Complaint_comment complaint_comment) throws ClassNotFoundException, SQLException{
+		
+		Complaint_boardDao complaints_boardDao = sqlSession.getMapper(Complaint_boardDao.class);
+		
+		int result = complaints_boardDao.insertComment(complaint_comment);
+		
+		System.out.println("댓글 등록 comment_idx: " + complaints_boardDao.getComment(complaint_comment.getComment_idx()).getComment_idx());
+		return result;
+	}
+	
+	// comment_idx에 따른 해당 댓글 가져오기
+	public Complaint_comment readComment(int comment_idx) throws ClassNotFoundException, SQLException{
+		
+		Complaint_boardDao complaints_boardDao = sqlSession.getMapper(Complaint_boardDao.class);
+		
+		System.out.println(comment_idx);
+		Complaint_comment comment = complaints_boardDao.getComment(comment_idx);
+		
+		System.out.println("해당 댓글 가져오기 : " + comment.getComment_idx());
+		
+		return comment;
+	}
+	 
+	
+	// 댓글 목록 가져오기
+	public List<Complaint_comment> getCommentList(int board_idx) throws ClassNotFoundException, SQLException{
+		
+		Complaint_boardDao complaints_boardDao = sqlSession.getMapper(Complaint_boardDao.class);
+		
+		List<Complaint_comment> list = complaints_boardDao.getAllComment(board_idx);
+		
+		return list;
+	}
+	/*public HashMap<String, Object> getCommentList(String pg, String order) throws ClassNotFoundException, SQLException{
+		
+		Complaint_boardDao complaints_boardDao = sqlSession.getMapper(Complaint_boardDao.class);
+		
+		int page = 1;
+		String strPg = pg;
+		String ord = "asc";
+		
+		int row = 10;
+		
+		if(strPg != null){
+			page  = Integer.parseInt(strPg.trim());
+		}
+		
+		if(order != null){
+			ord = order;
+		}
+
+		// 글 전체 수
+		int total = complaints_boardDao.getCommentCount();
+		
+		
+		// 출력 건수보다  글 수가 적을 경우
+		// 현재 출력 페이지를 1로 변경
+		if(row > total){
+			page = 1;
+		}
+		
+		// 페이지 수
+		int pageCount = (int)Math.ceil(total / (double)row);
+		
+		// 한페이지에 보여줄 범위 << [1] [2] [3] [4] [5] >>
+		int block = 5;
+		
+		// 보여줄 페이지의 시작
+		int fromPage = ((page - 1) / block * block) + 1;
+		// 보여줄 페이지의 끝
+		int toPage = ((page - 1) / block * block) + block;
+		
+		if(toPage > pageCount){
+			toPage = pageCount;
+		}
+		
+		int start = (page * row) - (row - 1);
+		int end = page * row;
+		
+		// 리스트를 불러오기 위한 값들
+		HashMap<String, Object> map = new HashMap<String, Object>();
+		map.put("start", start);
+		map.put("end", end);
+		map.put("order", ord);
+		
+		
+		List<Complaint_comment> list = complaints_boardDao.getAllComment(map);
+		
+		HashMap<String, Object> maps = new HashMap<String, Object>();
+		maps.put("list", list);
+		maps.put("pg", page);
+		maps.put("pageCount", pageCount);
+		maps.put("fromPage", fromPage);
+		maps.put("toPage", toPage);
+		maps.put("rowSize", row);
+		maps.put("order", ord);		
+		
+		return maps;
+	}*/
 	
 	// delete
 	public int deleteComplaint(int board_idx) throws ClassNotFoundException, SQLException{
@@ -233,4 +328,20 @@ public class ComplaintService {
 		return result;
 	}
 	
+	// rewrite
+	public int reWriteComplaint(Complaint_board complaint_board) throws ClassNotFoundException, SQLException{
+		
+		Complaint_boardDao complaints_boardDao = sqlSession.getMapper(Complaint_boardDao.class);
+		
+		if(complaint_board.getNotice() == null){
+			complaint_board.setNotice("N");
+		}
+		
+		complaint_board.setDepth(complaint_board.getDepth() + 1);
+		complaint_board.setStep(complaint_board.getStep() + 1);
+		
+		int result = complaints_boardDao.insertReWrite(complaint_board);
+		
+		return result;
+	}
 }

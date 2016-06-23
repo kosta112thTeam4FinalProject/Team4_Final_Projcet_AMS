@@ -1,368 +1,292 @@
 package kr.co.AMS.Service;
 
 import java.sql.SQLException;
+//입주민 회원가입
+import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.List;
+
+import javax.mail.internet.MimeMessage;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import kr.co.AMS.Model.DAO.Anonymous_boardDao;
-import kr.co.AMS.Model.vo.Anonymous_board;
-import kr.co.AMS.Model.vo.Anonymous_comment;
+import kr.co.AMS.Model.DAO.Member_Dao;
+import kr.co.AMS.Model.vo.Family;
+import kr.co.AMS.Model.vo.Member;
+import kr.co.AMS.Model.vo.Member_Car;
+import kr.co.AMS.Model.vo.Member_Certification;
 
-//입주민 회원가입
+
+//회원관련
+
 @Service
 public class JoinService {
 	
 	@Autowired
 	private SqlSession sqlSession;
 	
-	//1.익명게시판 글 목록 전체
-	public HashMap getAllAnonymousList(String pg/* int board_idx*/) throws ClassNotFoundException, SQLException
+	@Autowired
+	private JavaMailSender mailSender;
+	
+	/*//1.회원 가입 전 인증번호 생성 및 기본 사항 저장
+	public int insertMemberCertifi(Member_Certification member_certi) throws ClassNotFoundException, SQLException
 	{
-		System.out.println("Service_익명게시판 전체 목록");
+		System.out.println("Service_회원 인증번호 저장");
 		
-		int page=1;
-		String Strpg = pg;
+		Member_Dao member_dao = sqlSession.getMapper(Member_Dao.class);
 		
-		if(Strpg != null)
-		{
-			page = Integer.parseInt(Strpg);
+		int result = member_dao.insertMemberCertifi(member_certi);
+		
+		if (result > 0) {
+
+			try {
+				MimeMessage message = mailSender.createMimeMessage();
+				MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+
+				messageHelper.setFrom("betakosta1@gmail.com");
+				messageHelper.setTo(member_certi.getEmail());
+				messageHelper.setSubject("Kosta아파트 회원가입을 위한 인증번호입니다");
+				messageHelper.setText("안녕하세요", member_certi.getUserid()
+						+ " <html> 님의 인증번호는 " + member_certi.getChecknum() + "입니다."
+								+ "회원가입 페이지로 이동<a href='http://localhost:8090/Team4_Final_Project_AMS_board_Test/index.asm'>Kosta아파트 회원가입</a></html>");
+
+				mailSender.send(message);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} // end if
+		
+		return result;			
+	}*/
+	
+	
+	// select * from member_certification
+	// 인증번호 테이블의 정보를 멤버 vo에 입력 후 return > 회원가입 화면에 출력
+	public Member getMemberInfo(String userid) throws ClassNotFoundException, SQLException{
+
+		Member_Dao member_dao = sqlSession.getMapper(Member_Dao.class);
+		
+		Member_Certification member_certification = member_dao.getCertiInfo(userid);
+		
+		String addr[] = member_certification.getUserid().split("-");
+		
+		Member member = new Member();
+		
+		member.setUserid(member_certification.getUserid());
+		member.setName(member_certification.getName());
+		member.setEmail(member_certification.getEmail());
+		member.setAddr_1(addr[0]);
+		member.setAddr_2(addr[1]);
+		
+		return member;
+	}
+	
+	// 회원 가입 완료
+	public void joinCompleted(Member member, HttpServletRequest request) throws ClassNotFoundException, SQLException{
+		
+		Member_Dao member_dao = sqlSession.getMapper(Member_Dao.class);
+		
+		int result = member_dao.insertMember(member);
+		
+		if(result > 0 ){
+			member_dao.assignRole(member.getUserid());
 		}
 		
-		int rowSize = 10;
-		int start = (page*rowSize) - (rowSize - 1);
-		int end = page*rowSize;
+		Enumeration param = request.getParameterNames();
+	
+		int fNum = 0;
+		int carNum = 0;
 		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
+		HashMap<String, Object> members = new HashMap<String, Object>();
+		HashMap<String, Object> cars = new HashMap<String, Object>();
 		
-		int total = anonDao.anonymousTotalCount();
-		int comment_total = anonDao.anonymousCommentTotalCount();
+		while(param.hasMoreElements()){
 		
+			String name = (String)param.nextElement();
+			String value = request.getParameter(name);
+			
+			String[] str = name.split("_");
+			System.out.println("str0 : " + str[0]);						
+			
+			if(str[0].equals("name")){
+				members.put("name_"+fNum, value);
+			}
+			
+			if(str[0].equals("age")){
+				members.put("age_"+fNum, value);
+			}
+			
+			if(str[0].equals("gender")){
+				members.put("gender_"+fNum++, value);
+			}
+			
+			if(str[0].equals("carname")){
+				cars.put("carname_"+carNum, value);
+			}
+			
+			if(str[0].equals("carnumber")){
+				cars.put("carnumber_"+carNum++, value);
+			}	
+		}
 		
-		System.out.println("start_page : " +  start);
-		System.out.println("end_page :  " +  end );
-		System.out.println("총 게시물 건수 : " + total);		
+		for(int i = 0; i < fNum; i++){
+			Family family = new Family();
+			family.setUserid(member.getUserid());
+			family.setF_name((String)members.get("name_"+i));
+			family.setAge((Integer.valueOf((String)members.get("age_"+i))));
+			family.setGender((String)members.get("gender_"+i));
+			
+			System.out.println("family : " + family.getUserid());
+			System.out.println("family : " + family.getF_name());
+			System.out.println("family : " + family.getAge());
+			System.out.println("family : " + family.getGender());
+			
+			member_dao.addFamilyMember(family);
+		}
 		
-	   //... 목록
-	   int allPage = (int) Math.ceil(total / (double) rowSize); // 페이지수
-	   // int totalPage = total/rowSize + (total%rowSize==0?0:1);
-	   System.out.println("페이지수 : " + allPage);
+		for(int i = 0; i < carNum; i++){
+			Member_Car member_car = new Member_Car();
+			member_car.setUserid(member.getUserid());
+			member_car.setCarname((String)cars.get("carname_"+i));
+			member_car.setCarnumber((String)cars.get("carnumber_"+i));
+			
+			System.out.println("car : " + member_car.getUserid());
+			System.out.println("car : " + member_car.getCarname());
+			System.out.println("car : " + member_car.getCarnumber());
+			
+			member_dao.addMemberCars(member_car);
+		}
+		
+		if (result > 0) {
 
-	   int block = 10; 
-	   // 한페이지에 보여줄 범위 << [1] [2] [3] [4] [5] [6] [7] [8] [9] [10] >>
-	   int fromPage = ((page - 1) / block * block) + 1; // 보여줄 페이지의 시작
-	   // ((1-1)/10*10)
-	   int toPage = ((page - 1) / block * block) + block; // 보여줄 페이지의 끝
-	   if (toPage > allPage) // 예) 20>17
-	   { 
-		   toPage = allPage;
-	   }		
+			try {
+				MimeMessage message = mailSender.createMimeMessage();
+				MimeMessageHelper messageHelper = new MimeMessageHelper(message, true, "UTF-8");
+
+				messageHelper.setFrom("betakosta1@gmail.com");
+				messageHelper.setTo(member.getEmail());
+				messageHelper.setSubject("Kosta아파트 회원가입을 환영합니다");
+				messageHelper.setText("안녕하세요", member.getUserid()
+						+ " <html> 님, 가입을 환영합니다 "
+						+ " 홈페이지로 이동<a href='http://localhost:8090/Team4_Final_Project_AMS_board_Test/index.asm'>Kosta아파트</a></html>");
+
+				mailSender.send(message);
+				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		} // end if
+	}
+	
+    //2.회원 인증번호 일치 여부 확인
+	public int memberCheck(Member_Certification member_certification) throws ClassNotFoundException, SQLException
+	{
+		System.out.println("Service_회원 인증번호 일치 여부 확인");
 		
-		//start와 end 값을 map에 담음
-		HashMap<String, Integer> map = new HashMap<String, Integer>();
-		map.put("start", start);
-		map.put("end", end);
-		
-		List<Anonymous_board> list = anonDao.getAllAnonyList(map);
-		
-		//int result = anonDao.getAnonyCommentCount(board_idx);
-		 
-		HashMap maps = new HashMap();
-		maps.put("list", list);
-		maps.put("pg", page);
-		maps.put("allPage", allPage);
-		maps.put("block", block);
-		maps.put("fromPage", fromPage);
-		maps.put("toPage", toPage);
-		//maps.put("result", result);
-		
-		return maps;	
+		Member_Dao member_dao = sqlSession.getMapper(Member_Dao.class);
+		System.out.println("service : " + member_certification);
+		int result = member_dao.selectMemberCheck(member_certification);
+		System.out.println("service : " + result);
+		return result;
 		
 	}
 	
-	/*//1.2 익명게시판 해당 게시물의 총 댓글 수
-	public int totalAnonymous_comment(int board_idx) throws ClassNotFoundException, SQLException
+	/*//3.1 회원가입_member
+	public int joinMemberOk(Member member) throws ClassNotFoundException, SQLException
 	{
-		System.out.println("Service_익명게시판 댓글 수 가져오기");
+		System.out.println("Service_회원가입하기_Member");
+		Member_Dao member_dao = sqlSession.getMapper(Member_Dao.class);
 		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
-		
-		int result = anonDao.getAnonyCommentCount(board_idx);
-		
-		System.out.println("해당 게시물의 댓글 수  : " +  result);
+		int result = member_dao.insertMember(member);
 		
 		return result;
 		
 	}*/
 	
-	//2.익명게시판 글 상세보기
-	public Anonymous_board anonyDetail(int board_idx) throws ClassNotFoundException, SQLException
+	//3.2 회원가입_family
+	public int joinMemberFamily(Family family) throws ClassNotFoundException, SQLException
 	{
-		System.out.println("Service_익명게시판 글 상세보기");
+		System.out.println("Service_회원가입하기_Family");
+		Member_Dao member_dao = sqlSession.getMapper(Member_Dao.class);
 		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
-		
-		//조회수 증가
-		anonDao.getAnonymousReadnum(board_idx);
-		
-		Anonymous_board anony_board = anonDao.getAnonymousDetail(board_idx);
-		
-		return anony_board;
-	}
-	
-	//3.익명게시판 글 등록 완료하기
-	public int anonyInserOk(Anonymous_board anony_board) throws ClassNotFoundException, SQLException
-	{
-		System.out.println("Service_익명게시판 글 등록 완료하기");
-		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
-		
-		int result = anonDao.insertAnonymous(anony_board);
+		int result = member_dao.insertFamily(family);
+
 		
 		return result;
 	}
 
 	
-	//4.1익명게시판 글 수정하기
-	public Anonymous_board anonyModifyView(int board_idx) throws ClassNotFoundException, SQLException
-	{
-		System.out.println("Service_익명게시판 글 수정하기");
-		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
-		
-		Anonymous_board anony_board = anonDao.getAnonymousDetail(board_idx);
-		
-		return anony_board;
-	}
 	
-	
-	//4.2 익명게시판 글 수정하기 완료
-	public int anonyModifyViewOk(Anonymous_board anony_board) throws ClassNotFoundException, SQLException
+
+
+	//3.3 회원가입_car
+	public int joinMembmerCar(Member_Car car) throws ClassNotFoundException, SQLException 
 	{
-		System.out.println("Service_익명게시판 글 수정하기 완료");
+		System.out.println("Service_회원가입하기_Car");
+		Member_Dao member_dao = sqlSession.getMapper(Member_Dao.class);
 		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
-		
-		int result = anonDao.updateAnonymous(anony_board);
+		int result = member_dao.insertMemberCar(car);
 		
 		return result;
-	}
-	
-	//5.익명게시판 글 삭제하기
-	public int anonyDelete()
-	{
-		
-		return 0;
-	}
-	
-	
-	//6.1 익명게시판 답글 작성하기
-	public Anonymous_board anonyRewriteView(int board_idx) throws ClassNotFoundException, SQLException
-	{
-		System.out.println("Service_익명게시판 답글 등록하기");
-		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
-		
-		Anonymous_board anony_board = anonDao.getAnonymousDetail(board_idx);
-		
-		return anony_board;
 		
 	}
 	
-	
-	//6.2 익명게시판 답글 완료하기
-	public int anonyRewriteOk(Anonymous_board anony_board) throws ClassNotFoundException, SQLException
+	//3.회원가입
+/*	@Transactional(rollbackFor=Exception.class)
+	public String joinMemberOk(Member member, Family family, Member_Car car) throws Exception 
 	{
-		System.out.println("Service_익명게시판  답글 등록 완료");
+		System.out.println("Service_회원가입하기");
 		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
+		Member_Dao member_dao = sqlSession.getMapper(Member_Dao.class);		
 		
-		//답글쓰기 step처리
-		System.out.println("현재 step : " + anony_board.getStep());
+		int result;
+		int result2;
+		int result3;
 		
-		anonDao.updateAnonymousStep(anony_board);	
+		try {
+			result = member_dao.insertMember(member);
+			result2 = member_dao.insertFamily(family);
+			result3 = member_dao.insertMemberCar(car);	
+			
+		}catch(Exception e){
+        	e.printStackTrace();
+        	throw new Exception();
+        }		 
 		
-		System.out.println("update step : " + anony_board.getStep());
+        String view = null;
 		
-		
-		//step, depth처리
-		//anony_board.setStep(anony_board.getStep()+1);
-		//anony_board.setDepth(anony_board.getDepth()+1);
-		
-		System.out.println("답글에 대한 ref :  " + anony_board.getRef());
-		System.out.println("답글에 대한 step :  " + anony_board.getStep());
-		System.out.println("답글에 대한 depth :  " + anony_board.getDepth());
-		
-		int result = anonDao.insertReAnonymous(anony_board);
-		
-		return result;
-	}
-	
-	
-	//7.익명게시판 댓글 등록 완료하기
-	public int anonyCommentInserOk(Anonymous_comment anony_comment) throws ClassNotFoundException, SQLException
-	{
-		System.out.println("Service_익명게시판  댓글 등록 완료");
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
-		
-		int result = anonDao.insertAnonymousComment(anony_comment);
-		
-		return result;
-	}
-	
-	
-	//8.익명게시판 댓글 목록 전체(상세보기)
-	public HashMap getAllAnonyCommentList(int board_idx, String pg) throws ClassNotFoundException, SQLException
-	{
-		System.out.println("Service_익명게시판  댓글 목록 전체 보기");
-		
-		int page=1;
-		String Strpg = pg;
-		
-		if(Strpg != null)
+		if(result > 0 && result2 > 0 && result3 > 0)
 		{
-			page = Integer.parseInt(Strpg);
+			view = "Member.Join.Member_Join_Ok";
 		}
+		else
+		{
+			view="redirect:index.asm";
+		}
+			
+		return "Member.Join.Member_Join_Ok";
 		
-		int rowSize = 5;
-		int start = (page*rowSize) - (rowSize - 1);
-		int end = page*rowSize;
-		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
-		
-		int total = anonDao.anonymousCommentTotalCount();
-		
-		System.out.println("start_page : " +  start);
-		System.out.println("end_page :  " +  end );
-		System.out.println("총 게시물 건수 : " + total);
-		
-	   //... 목록
-	   int allPage = (int) Math.ceil(total / (double) rowSize); // 페이지수
-	   // int totalPage = total/rowSize + (total%rowSize==0?0:1);
-	   System.out.println("페이지수 : " + allPage);
-
-	   int block = 10; 
-	   // 한페이지에 보여줄 범위 << [1] [2] [3] [4] [5] [6] [7] [8] [9] [10] >>
-	   int fromPage = ((page - 1) / block * block) + 1; // 보여줄 페이지의 시작
-	   // ((1-1)/10*10)
-	   int toPage = ((page - 1) / block * block) + block; // 보여줄 페이지의 끝
-	   if (toPage > allPage) // 예) 20>17
-	   { 
-		   toPage = allPage;
-	   }		
-		
-		//start와 end 값을 map에 담음
-		HashMap<String, Integer> map = new HashMap<String, Integer>();
-		map.put("start", start);
-		map.put("end", end);
-		map.put("board_idx", board_idx);
-		
-		List<Anonymous_comment> list = anonDao.getAllCommentList(map);
-		
-		//댓글을 작성할 해당 게시물의 board_idx를 가져옴
-		Anonymous_board anony_board = new Anonymous_board();
-		// int board_idx = anony_board.getBoard_idx();
-		 
-		HashMap maps = new HashMap();
-		maps.put("list", list);
-		maps.put("pg", page);
-		maps.put("allPage", allPage);
-		maps.put("block", block);
-		maps.put("fromPage", fromPage);
-		maps.put("toPage", toPage);
-		maps.put("board_idx",board_idx);		
-		return maps;	
-		
-	}
+	}*/
 	
 	
-	
-	//9.1 익명게시판 댓글 수정하기
-	public Anonymous_comment anonyCommentModifyView(int comment_idx) throws ClassNotFoundException, SQLException
+	//4. 회원 로그인
+	public int member_Login(String userid, String password) throws ClassNotFoundException, SQLException
 	{
+		System.out.println("Service_회원 로그인");
 		
-		System.out.println("Service_익명게시판 글 수정하기");
+		Member_Dao member_dao = sqlSession.getMapper(Member_Dao.class);	
 		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
 		
-		Anonymous_comment anony_comment = anonDao.getAnonymousCommentDetail(comment_idx);
+		int result = member_dao.memberLogin(userid, password);
 		
-		return anony_comment;
 		
-	}
-	
-	
-	//9.2 익명게시판 댓글 수정 완료하기
-	public int anonyCommentModifyViewOk(Anonymous_comment anony_comment) throws ClassNotFoundException, SQLException
-	{
-		System.out.println("Service_익명게시판 댓글 수정하기 완료");
-		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
-		
-		int result = anonDao.updateAnonymousComment(anony_comment);
 		
 		return result;
 	}
-	
-	
-	//10.1 익명게시판 댓글에 댓글 등록하기
-	public Anonymous_comment anonyCommentRewriteView(int comment_idx) throws ClassNotFoundException, SQLException
-	{
-		System.out.println("Service_익명게시판 댓글에 댓글 등록하기");
-		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
-		
-		Anonymous_comment anony_comment = anonDao.getAnonymousCommentDetail(comment_idx);
-		
-		return anony_comment;
-		
-	}
-	
-	
-	//10.2 익명게시판 댓글에 댓글 작성 완료하기
-	public int anonyCommentRewriteOk(Anonymous_comment anony_comment) throws ClassNotFoundException, SQLException
-	{
-		System.out.println("Service_익명게시판  댓글에 댓글 등록 완료");
-		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
-		
-		//답글쓰기 step처리
-		System.out.println("현재 step : " + anony_comment.getStep());
-		
-		anonDao.updateAnonymousComment(anony_comment);	
-		
-		System.out.println("update step : " + anony_comment.getStep());
-		
-		
-		//step, depth처리
-		//anony_board.setStep(anony_board.getStep()+1);
-		//anony_board.setDepth(anony_board.getDepth()+1);
-		
-		System.out.println("답글에 대한 ref :  " + anony_comment.getRef());
-		System.out.println("답글에 대한 step :  " + anony_comment.getStep());
-		System.out.println("답글에 대한 depth :  " + anony_comment.getDepth());
-		
-		int result = anonDao.insertReAnonymousComment(anony_comment);
-		
-		return result;
-	}
-	
-	
-	//11. 익명게시판 댓글 삭제하기
-	public int anonyCommentDelete(int comment_idx) throws ClassNotFoundException, SQLException
-	{
-		System.out.println("Service_익명게시판  댓글 삭제하기");
-		
-		Anonymous_boardDao anonDao = sqlSession.getMapper(Anonymous_boardDao.class);
-		
-		int result = anonDao.deleteAnonymousComment(comment_idx);
-		
-		return result;		
-	}
-
-	
 
 }
