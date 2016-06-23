@@ -61,6 +61,9 @@ http://www.springframework.org/schema/websocket/spring-websocket.xsd">
 	<!-- JSON -->
 	<beans:bean id="jacksonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/> 
 	
+	<!-- JsonView 설정 -->
+	<beans:bean name="JsonView"
+		class="org.springframework.web.servlet.view.json.MappingJackson2JsonView" />
 	
 	<!--Spring_Mail관련 설정 -->	
 	<beans:bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
