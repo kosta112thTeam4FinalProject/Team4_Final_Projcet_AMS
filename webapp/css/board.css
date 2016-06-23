@@ -23,6 +23,21 @@
 	position: absolute;
 }
 
+#board_top {
+	
+	padding: 20px;
+	margin-bottom: 0px;
+	/* border-bottom: 1px solid #bcbcbc; */
+	position: relative;	
+}
+
+#board_top a {
+	
+	text-decoration: none;
+	text-align: right;
+	float: right;
+}
+
 /* 게시판 테이블 CSS */
 #board {
 	padding: 20px;

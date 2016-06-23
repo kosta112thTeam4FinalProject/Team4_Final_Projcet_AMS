@@ -14,6 +14,8 @@ http://www.springframework.org/schema/context/spring-context.xsd
 http://www.springframework.org/schema/task 
 http://www.springframework.org/schema/task/spring-task-3.1.xsd" >   
 
+
+   
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
 	
 	<!-- Enables the Spring MVC @Controller programming model -->
@@ -30,7 +32,7 @@ http://www.springframework.org/schema/task/spring-task-3.1.xsd" >
 		<beans:property name="definitions">
 			<!--Tiles를 구성하는 xml 파일이 여러개 있을 수 있으므로 collection 제공  -->
 			<beans:list>
-				<beans:value>/WEB-INF/Tiles.xml</beans:value>			
+				<beans:value>/WEB-INF/spring/Tiles.xml</beans:value>			
 			</beans:list>	
 		</beans:property>
 	</beans:bean>
@@ -40,5 +42,26 @@ http://www.springframework.org/schema/task/spring-task-3.1.xsd" >
 		<beans:property name="viewClass" value="org.springframework.web.servlet.view.tiles2.TilesView"/>	
 	</beans:bean>
 	
+	
+	<!-- JSON -->
+	<beans:bean id="jacksonMessageConverter" class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter"/> 
+	
+	
+	<!--Spring_Mail관련 설정 -->
+	
+	<beans:bean id="mailSender" class="org.springframework.mail.javamail.JavaMailSenderImpl">
+		<beans:property name="host" value="smtp.gmail.com" />
+		<beans:property name="port" value="587" />
+		<beans:property name="username" value="kostabeta2@gmail.com" />
+		<beans:property name="password" value="zhtmxk123" />
+		<beans:property name="javaMailProperties">
+			<beans:props>
+				<beans:prop key="mail.transport.protocol">smtp</beans:prop>
+				<beans:prop key="mail.smtp.auth">true</beans:prop>
+				<beans:prop key="mail.smtp.starttls.enable">true</beans:prop>
+				<beans:prop key="mail.debug">true</beans:prop>
+			</beans:props>
+		</beans:property>
+	</beans:bean>
 
 </beans:beans>
