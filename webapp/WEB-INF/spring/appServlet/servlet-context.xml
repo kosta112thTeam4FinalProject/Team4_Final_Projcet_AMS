@@ -12,8 +12,9 @@ http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
 http://www.springframework.org/schema/context 
 http://www.springframework.org/schema/context/spring-context.xsd
 http://www.springframework.org/schema/task 
-http://www.springframework.org/schema/task/spring-task-3.1.xsd" >   
-
+http://www.springframework.org/schema/task/spring-task-3.1.xsd 
+http://www.springframework.org/schema/websocket
+http://www.springframework.org/schema/websocket/spring-websocket.xsd">
 
    
 	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
@@ -63,5 +64,14 @@ http://www.springframework.org/schema/task/spring-task-3.1.xsd" >
 			</beans:props>
 		</beans:property>
 	</beans:bean>
+	
+	
+	<!-- webSocket 관련 설정  -->   
+   <beans:websocket:handlers>
+      <websocket:mapping path="/websocket/echo.do"
+         handler="myHandler" />
+   </beans:websocket:handlers>
+
+   <beans:bean id="myHandler" class="kr.co.AMS.Controller.SocketHandler"/>
 
 </beans:beans>
